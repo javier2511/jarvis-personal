@@ -1,6 +1,5 @@
-from openai import OpenAI
-from playsound import playsound
 import os
+from openai import OpenAI
 
 
 class TTSService:
@@ -14,10 +13,10 @@ class TTSService:
             voice="ash",
             input=texto,
             instructions="""
-Eres Jarvis, un asistente personal avanzado de Javier.
-Habla con tono tranquilo, inteligente y seguro.
-Profesional pero cercano.
-Español mexicano natural.
+Eres Jarvis, el asistente personal avanzado de Javier.
+Habla con un tono tranquilo, inteligente y seguro.
+Sé profesional pero cercano.
+Usa español mexicano natural.
 No suenes como locutor ni narrador.
 """
         )
@@ -25,10 +24,13 @@ No suenes como locutor ni narrador.
         respuesta.write_to_file(archivo)
 
     def hablar(self, texto):
+        # Este método solo se utiliza en la versión local de PC.
         archivo = "jarvis_voice.mp3"
-
         self.generar_audio(texto, archivo)
 
-        playsound(archivo)
-
-        os.remove(archivo)
+        try:
+            from playsound import playsound
+            playsound(archivo)
+        finally:
+            if os.path.exists(archivo):
+                os.remove(archivo)
