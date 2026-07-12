@@ -1,0 +1,16 @@
+venv/
+__pycache__/
+*.pyc
+
+.env
+credentials.json
+token.json
+.spotify_cache
+.cache
+
+audio_*
+voz_*
+jarvis_voice.mp3
+
+.vscode/
+.DS_Store

@@ -1,0 +1,1093 @@
+[
+    {
+        "timestamp": "2026-06-16 21:57:44",
+        "usuario": "abre el bloc de notas",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: Xavi251793. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"
+    },
+    {
+        "timestamp": "2026-06-16 22:04:48",
+        "usuario": "abre el bloc de notas",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: Xavi251793. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}"
+    },
+    {
+        "timestamp": "2026-06-16 22:05:13",
+        "usuario": "abre bloc de notas",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": "Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
+    },
+    {
+        "timestamp": "2026-06-16 22:11:29",
+        "usuario": "abre bloc de notas",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "notepad"
+            }
+        },
+        "resultado": "ejecutado",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-16 22:14:43",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "spotify"
+            }
+        },
+        "resultado": "ejecutado",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-16 22:15:11",
+        "usuario": "quiero abrir spotify",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "spotify"
+            }
+        },
+        "resultado": "ejecutado",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-16 22:15:25",
+        "usuario": "\tquiero escuchar música",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "spotify"
+            }
+        },
+        "resultado": "ejecutado",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-16 22:15:58",
+        "usuario": "recuerda que mi jefe es andres",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "No sé cómo ejecutar esa acción.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-16 22:23:31",
+        "usuario": "recuerda que mi jefe es andres",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "No sé cómo ejecutar esa acción.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-16 22:24:00",
+        "usuario": "recuerda que mi jefe es andres",
+        "interpretacion": {
+            "modulo": "memory",
+            "accion": "guardar_jefe",
+            "parametros": {
+                "nombre_jefe": "andres"
+            }
+        },
+        "resultado": "No sé cómo ejecutar esa acción.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-16 22:32:36",
+        "usuario": "recuerda que mi jefe es Andres",
+        "interpretacion": {
+            "modulo": "memory",
+            "accion": "guardar_jefe",
+            "parametros": {
+                "nombre_jefe": "Andres"
+            }
+        },
+        "resultado": "Jefe actualizado a Andres.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 18:35:57",
+        "usuario": "recuerda que mi jefe es Andres",
+        "interpretacion": {
+            "modulo": "memory",
+            "accion": "guardar_dato",
+            "parametros": {
+                "campo": "jefe",
+                "valor": "Andres"
+            }
+        },
+        "resultado": "He guardado jefe = Andres.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 18:36:06",
+        "usuario": "quien es mi jefe?",
+        "interpretacion": {
+            "modulo": "memory",
+            "accion": "consultar_dato",
+            "parametros": {
+                "campo": "jefe"
+            }
+        },
+        "resultado": "jefe: Andres",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 21:45:09",
+        "usuario": "abre el bloc de notas",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "notepad"
+            }
+        },
+        "resultado": "ejecutado",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 21:45:23",
+        "usuario": "Abre Spotify",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "Spotify"
+            }
+        },
+        "resultado": "No conozco el programa: Spotify",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 21:45:33",
+        "usuario": "Recuerda que mi novia es Lu",
+        "interpretacion": {
+            "modulo": "memory",
+            "accion": "guardar_dato",
+            "parametros": {
+                "campo": "novia",
+                "valor": "Lu"
+            }
+        },
+        "resultado": "He guardado novia = Lu.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 21:50:11",
+        "usuario": "yo creo que sería una gran decepción no poder compartir con tu equipo de jugadores",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 21:53:47",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "spotify"
+            }
+        },
+        "resultado": "ejecutado",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:14:21",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "spotify"
+            }
+        },
+        "resultado": null,
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:14:42",
+        "usuario": "tras el futbolista del real madrid el centro de yuno va para que se metiera  abre spotify",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "spotify"
+            }
+        },
+        "resultado": null,
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:14:49",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "system",
+            "accion": "abrir_programa",
+            "parametros": {
+                "programa": "spotify"
+            }
+        },
+        "resultado": null,
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:16:10",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": null,
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:19:21",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:19:57",
+        "usuario": "pausa spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "pausa",
+            "parametros": {}
+        },
+        "resultado": "Spotify pausado",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:26:58",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:27:20",
+        "usuario": "baja",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "bajar_volumen",
+            "parametros": {}
+        },
+        "resultado": "Bajé el volumen",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:27:29",
+        "usuario": "baja más el volumen",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "bajar_volumen",
+            "parametros": {}
+        },
+        "resultado": "Bajé el volumen",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:40:57",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:41:22",
+        "usuario": "siguiente canción",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "siguiente",
+            "parametros": {}
+        },
+        "resultado": "Siguiente canción",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:41:59",
+        "usuario": "siguiente canción",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "siguiente",
+            "parametros": {}
+        },
+        "resultado": "Siguiente canción",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:50:04",
+        "usuario": "",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:50:19",
+        "usuario": "abre spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:50:36",
+        "usuario": "barbie salir",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:50:47",
+        "usuario": "sin salir",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:51:04",
+        "usuario": "salir",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-06-19 22:51:04",
+        "usuario": "salir",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-01 21:29:39",
+        "usuario": "más rescatistas o buscado no sé cómo se llama y llegaron unos días abrir spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-01 21:29:39",
+        "usuario": "señoras ya grandes",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-01 21:29:42",
+        "usuario": "abrir spotify señora ya grande",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-01 21:29:44",
+        "usuario": "porque estaban marchando los de las mamás rescatistas o buscado no sé cómo se llaman y llegaron unos niños abrir spotify spotify señoras ya grandes",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-01 21:29:47",
+        "usuario": "spotify abierto",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-01 22:09:07",
+        "usuario": "hola hola",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-04 22:03:50",
+        "usuario": "",
+        "interpretacion": {
+            "modulo": "desconocido",
+            "accion": "desconocida",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: desconocido",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-04 22:04:04",
+        "usuario": "tal vez abre spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Spotify abierto",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-04 22:13:46",
+        "usuario": "luis que tengo hoy",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "eventos_hoy",
+            "parametros": {}
+        },
+        "resultado": "Tus eventos de hoy son:\n- 10:00 Junta con Andrés\n- 15:00 Revisar dashboard Canal Digital\n",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 14:19:42",
+        "usuario": "agenda prueba mañana a la 1 de la tarde",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "crear_evento",
+            "parametros": {
+                "titulo": "prueba",
+                "inicio": "2026-07-06T13:00:00",
+                "fin": "2026-07-06T14:00:00"
+            }
+        },
+        "resultado": "Evento creado: prueba",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 14:27:15",
+        "usuario": "busca mi evento a prueba",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "buscar_eventos",
+            "parametros": {
+                "texto": "prueba"
+            }
+        },
+        "resultado": "Encontré estos eventos:\n19:00 - prueba\n",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 14:40:53",
+        "usuario": "mueve mi evento prueba a las 6 pm",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "mover_evento",
+            "parametros": {
+                "texto": "prueba",
+                "nuevo_inicio": "2026-07-05T18:00:00",
+                "nuevo_fin": "2026-07-05T19:00:00"
+            }
+        },
+        "resultado": "Moví el evento: prueba",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 14:46:31",
+        "usuario": "pues elimina prueba",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "eliminar_evento",
+            "parametros": {
+                "texto": "prueba"
+            }
+        },
+        "resultado": "Eliminé el evento: prueba",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:01:25",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\nBuenos días, Javier.\n\nCalendario:\nNo tienes eventos pendientes hoy.\n\nClima:\nCiudad de México: 🌩️  +23°C\n\n\nYa puse Spotify para empezar el día.\n",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:01:57",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\nBuenos días, Javier.\n\nCalendario:\nNo tienes eventos pendientes hoy.\n\nClima:\nCiudad de México: 🌩️  +23°C\n\n\nYa puse Spotify para empezar el día.\n",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:17:02",
+        "usuario": "hola luis buenos días",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:17:15",
+        "usuario": "buenos días",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:17:23",
+        "usuario": "buenos días",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:19:35",
+        "usuario": "luis buenos días",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:19:50",
+        "usuario": "buenos días",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:21:08",
+        "usuario": "luis que tengo hoy en calendario",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "eventos_hoy",
+            "parametros": {}
+        },
+        "resultado": "Tus eventos de hoy son:\n- 00:00 - Partido México gana\n",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:22:05",
+        "usuario": "orbis buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\nBuenos días, Javier.\n\nCalendario:\nTus eventos de hoy son:\n- 00:00 - Partido México gana\n\n\nClima:\nCiudad de México: 🌩️  +16°C\n\n\nYa puse Spotify para empezar el día.\n",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:22:56",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\nBuenos días, Javier.\n\nCalendario:\nTus eventos de hoy son:\n- 00:00 - Partido México gana\n\n\nClima:\nCiudad de México: 🌩️  +16°C\n\n\nYa puse Spotify para empezar el día.\n",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:35:58",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    Tus eventos de hoy son:\n- 00:00 - Partido México gana\n\n\n    Clima:\n    Ciudad de México: 🌩️  +16°C\n\n\n    Ya puse Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:36:32",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    Tus eventos de hoy son:\n- 00:00 - Partido México gana\n\n\n    Clima:\n    Ciudad de México: 🌩️  +16°C\n\n\n    Ya puse Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 15:38:06",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    Tus eventos de hoy son:\n- 00:00 - Partido México gana\n\n\n    Clima:\n    Ciudad de México: 🌩️  +16°C\n\n\n    Ya puse Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-05 16:03:34",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    Tus eventos de hoy son:\n- 00:00 - Partido México gana\n\n\n    Clima:\n    Ciudad de México: 🌩️  +16°C\n\n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-06 21:51:09",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Patchy rain nearby, con 18 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-06 21:51:49",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Patchy rain nearby, con 18 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-06 22:28:15",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Patchy rain nearby, con 18 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-06 22:34:24",
+        "usuario": "agrega calendario",
+        "interpretacion": {
+            "modulo": "none",
+            "accion": "none",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: none",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-06 22:36:11",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Patchy rain nearby, con 18 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-06 22:38:47",
+        "usuario": "luis buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Patchy rain nearby, con 18 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:07:47",
+        "usuario": "buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Overcast, con 18 grados. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:19:26",
+        "usuario": "qué tengo hoy",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "eventos_hoy",
+            "parametros": {}
+        },
+        "resultado": "No tienes eventos hoy.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:29:19",
+        "usuario": "qué tengo hoy",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "eventos_hoy",
+            "parametros": {}
+        },
+        "resultado": "No tienes eventos hoy.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:29:19",
+        "usuario": "qué tengo hoy",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "eventos_hoy",
+            "parametros": {}
+        },
+        "resultado": "No tienes eventos hoy.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:32:01",
+        "usuario": "agregar a calendario, el 31 de Julio a las 9 evento:pelicula spiderman",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "crear_evento",
+            "parametros": {
+                "titulo": "pelicula spiderman",
+                "inicio": "2026-07-31T21:00:00",
+                "fin": "2026-07-31T22:00:00"
+            }
+        },
+        "resultado": "Evento creado: pelicula spiderman",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:32:05",
+        "usuario": "agregar a calendario, el 31 de Julio a las 9 evento:pelicula spiderman",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "crear_evento",
+            "parametros": {
+                "titulo": "pelicula spiderman",
+                "inicio": "2026-07-31T21:00:00",
+                "fin": "2026-07-31T22:00:00"
+            }
+        },
+        "resultado": "Evento creado: pelicula spiderman",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:33:52",
+        "usuario": "agregar a calendario, el 13 de septiembre a las 7 evento:wwe raw",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "crear_evento",
+            "parametros": {
+                "titulo": "wwe raw",
+                "inicio": "2026-09-13T19:00:00",
+                "fin": "2026-09-13T20:00:00"
+            }
+        },
+        "resultado": "Evento creado: wwe raw",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:33:55",
+        "usuario": "agregar a calendario, el 13 de septiembre a las 7 evento:wwe raw",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "crear_evento",
+            "parametros": {
+                "titulo": "wwe raw",
+                "inicio": "2026-09-13T19:00:00",
+                "fin": "2026-09-13T20:00:00"
+            }
+        },
+        "resultado": "Evento creado: wwe raw",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:47:26",
+        "usuario": "Jarvis, buenos días.",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Partly cloudy, con 17 grados. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-07 21:48:04",
+        "usuario": "Ya Luis, buenos días.",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Partly cloudy, con 17 grados. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 19:28:53",
+        "usuario": "jarvis buenos dias",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Rain With Thunderstorm, con 18 grados. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 20:13:29",
+        "usuario": "Jarvis reproduce spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Reproduciendo Spotify en Everywhere.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 20:34:37",
+        "usuario": "Jarvis reproduce Eminem",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "reproducir_busqueda",
+            "parametros": {
+                "busqueda": "Eminem"
+            }
+        },
+        "resultado": "Reproduciendo música de Eminem.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:13:39",
+        "usuario": "Agrega película moana al calendario del viernes a las 9",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "crear_evento",
+            "parametros": {
+                "titulo": "Película Moana",
+                "inicio": "2026-07-10T21:00:00",
+                "fin": "2026-07-10T22:00:00"
+            }
+        },
+        "resultado": "Evento creado: Película Moana",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:16:03",
+        "usuario": "Que tengo en el calendario para el viernes",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:16:28",
+        "usuario": "Dime eventos del viernes",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:16:30",
+        "usuario": "Dime eventos del viernes",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:16:48",
+        "usuario": "Jarvis dime qué eventos tengo el viernes",
+        "interpretacion": {},
+        "resultado": "error",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:17:00",
+        "usuario": "Jarvis buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Heavy Rain With Thunderstorm, con 14 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:17:30",
+        "usuario": "Jarvis buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Heavy Rain With Thunderstorm, con 14 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:22:29",
+        "usuario": "Jarvis agrega evento mañana a la 1:00 pm partido mundial",
+        "interpretacion": {
+            "modulo": "calendar",
+            "accion": "crear_evento",
+            "parametros": {
+                "titulo": "partido mundial",
+                "inicio": "2026-07-09T13:00:00",
+                "fin": "2026-07-09T14:00:00"
+            }
+        },
+        "resultado": "Evento creado: partido mundial",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:27:43",
+        "usuario": "Jarvis buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Heavy Rain With Thunderstorm, con 14 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:33:17",
+        "usuario": "Buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Light Rain With Thunderstorm, con 14 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:34:16",
+        "usuario": "Jarvis buenos días",
+        "interpretacion": {
+            "modulo": "routine",
+            "accion": "buenos_dias",
+            "parametros": {}
+        },
+        "resultado": "\n    Buenos días, Javier.\n\n    Calendario:\n    No tienes eventos hoy.\n\n    Clima:\n    El clima actual en Ciudad de México es Light Rain With Thunderstorm, con 14 grados. La sensación es fresca, te recomiendo llevar chamarra. Parece que puede llover, considera llevar paraguas. \n\n    Ahora iniciaré Spotify para empezar el día.\n    ",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:36:06",
+        "usuario": "Reproduce spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Reproduciendo Spotify en sala jl.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:36:51",
+        "usuario": "Reproduce spotify",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {}
+        },
+        "resultado": "Reproduciendo Spotify en iPhone.",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:37:13",
+        "usuario": "Reproduce Spotify en iPhone",
+        "interpretacion": {
+            "modulo": "none",
+            "accion": "none",
+            "parametros": {}
+        },
+        "resultado": "Módulo no reconocido: none",
+        "error": null
+    },
+    {
+        "timestamp": "2026-07-08 21:37:45",
+        "usuario": "Reproduce Spotify en iPhone",
+        "interpretacion": {
+            "modulo": "spotify",
+            "accion": "abrir",
+            "parametros": {
+                "dispositivo": "iPhone"
+            }
+        },
+        "resultado": "Reproduciendo Spotify en iPhone.",
+        "error": null
+    }
+]

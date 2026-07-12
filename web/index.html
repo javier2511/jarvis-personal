@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
+
+    <meta name="theme-color" content="#020711">
+
+    <title>Jarvis</title>
+
+    <link rel="stylesheet" href="/web/style.css">
+</head>
+
+<body>
+    <main class="app-shell">
+
+        <div class="background-grid"></div>
+        <div class="background-glow"></div>
+
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">PERSONAL INTELLIGENCE SYSTEM</p>
+                <h1>JARVIS</h1>
+            </div>
+
+            <div class="connection">
+                <span class="connection-dot"></span>
+                <span>ONLINE</span>
+            </div>
+        </header>
+
+        <section class="reactor-section">
+
+            <button
+                id="reactorButton"
+                class="reactor"
+                type="button"
+                aria-label="Activar micrófono"
+            >
+                <span class="orbit orbit-one"></span>
+                <span class="orbit orbit-two"></span>
+                <span class="orbit orbit-three"></span>
+
+                <span class="particle particle-one"></span>
+                <span class="particle particle-two"></span>
+                <span class="particle particle-three"></span>
+
+                <span class="reactor-center">
+                    <span class="reactor-light"></span>
+                </span>
+            </button>
+
+            <p id="status" class="status">Toca el reactor para hablar</p>
+
+            <p id="recordingHint" class="recording-hint">
+                Un toque inicia · Otro toque termina
+            </p>
+        </section>
+
+        <section class="conversation-panel">
+
+            <article class="message-card user-card">
+                <div class="message-header">
+                    <span>TÚ</span>
+                    <span id="userState">ESPERANDO</span>
+                </div>
+
+                <p id="userText">
+                    Tu comando aparecerá aquí.
+                </p>
+            </article>
+
+            <article class="message-card jarvis-card">
+                <div class="message-header">
+                    <span>JARVIS</span>
+                    <span id="jarvisState">LISTO</span>
+                </div>
+
+                <p id="jarvisText">
+                    Todos los sistemas están operativos, Javier.
+                </p>
+            </article>
+
+        </section>
+
+        <footer class="footer">
+            <span>JARVIS CORE</span>
+            <span>V2.0</span>
+        </footer>
+
+    </main>
+
+    <script src="/web/script.js"></script>
+</body>
+</html>

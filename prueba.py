@@ -1,0 +1,1 @@
+print("spotify eminem".split())

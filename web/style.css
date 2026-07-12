@@ -1,0 +1,640 @@
+:root {
+    --cyan: #25dfff;
+    --cyan-soft: rgba(37, 223, 255, 0.35);
+    --green: #2cffaa;
+    --orange: #ffb22c;
+    --white-blue: #e9fdff;
+
+    --background: #01040a;
+    --panel: rgba(4, 25, 42, 0.58);
+    --border: rgba(57, 216, 255, 0.25);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--background);
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    color: var(--white-blue);
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    overflow-x: hidden;
+}
+
+button {
+    font: inherit;
+}
+
+.app-shell {
+    position: relative;
+
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    margin: 0 auto;
+
+    padding:
+        calc(22px + env(safe-area-inset-top))
+        20px
+        calc(18px + env(safe-area-inset-bottom));
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 28%,
+            rgba(0, 128, 198, 0.28),
+            transparent 35%
+        ),
+        linear-gradient(
+            180deg,
+            #020a14 0%,
+            #01040a 70%,
+            #000207 100%
+        );
+}
+
+.background-grid {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(
+            rgba(34, 203, 255, 0.055) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(34, 203, 255, 0.055) 1px,
+            transparent 1px
+        );
+
+    background-size: 34px 34px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.8),
+            transparent 82%
+        );
+}
+
+.background-glow {
+    position: absolute;
+
+    width: 380px;
+    height: 380px;
+
+    top: 130px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0, 183, 255, 0.12),
+            transparent 68%
+        );
+
+    filter: blur(15px);
+}
+
+.topbar {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.eyebrow {
+    margin: 0 0 4px;
+
+    color: #69cce7;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+h1 {
+    margin: 0;
+
+    color: #dffcff;
+
+    font-size: 31px;
+    font-weight: 600;
+    letter-spacing: 11px;
+
+    text-shadow:
+        0 0 20px rgba(37, 223, 255, 0.7);
+}
+
+.connection {
+    margin-top: 5px;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #62cbe5;
+
+    font-size: 9px;
+    letter-spacing: 1.5px;
+}
+
+.connection-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--green);
+
+    box-shadow:
+        0 0 10px var(--green);
+}
+
+.reactor-section {
+    position: relative;
+    z-index: 2;
+
+    margin-top: 25px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.reactor {
+    position: relative;
+
+    width: 245px;
+    height: 245px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: transparent;
+
+    cursor: pointer;
+    touch-action: manipulation;
+
+    transition:
+        transform 160ms ease,
+        filter 250ms ease;
+}
+
+.reactor:active {
+    transform: scale(0.97);
+}
+
+.orbit {
+    position: absolute;
+    inset: 50% auto auto 50%;
+
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border: 1px solid rgba(57, 222, 255, 0.68);
+
+    box-shadow:
+        0 0 14px rgba(37, 223, 255, 0.45),
+        inset 0 0 14px rgba(37, 223, 255, 0.15);
+}
+
+.orbit::before,
+.orbit::after {
+    content: "";
+
+    position: absolute;
+
+    width: 9px;
+    height: 2px;
+
+    top: 50%;
+
+    background: var(--cyan);
+
+    box-shadow:
+        0 0 8px var(--cyan);
+}
+
+.orbit::before {
+    left: -5px;
+}
+
+.orbit::after {
+    right: -5px;
+}
+
+.orbit-one {
+    width: 235px;
+    height: 235px;
+
+    border-style: dashed;
+
+    animation: rotate-clockwise 12s linear infinite;
+}
+
+.orbit-two {
+    width: 181px;
+    height: 181px;
+
+    border-color: rgba(75, 236, 255, 0.82);
+
+    animation: rotate-counterclockwise 7s linear infinite;
+}
+
+.orbit-three {
+    width: 128px;
+    height: 128px;
+
+    border-style: dotted;
+
+    animation: rotate-clockwise 4.5s linear infinite;
+}
+
+.reactor-center {
+    position: absolute;
+
+    width: 88px;
+    height: 88px;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(199, 249, 255, 0.8);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(227, 253, 255, 0.85) 0%,
+            rgba(29, 219, 255, 0.7) 24%,
+            rgba(0, 96, 160, 0.44) 62%,
+            transparent 72%
+        );
+
+    box-shadow:
+        0 0 22px var(--cyan),
+        0 0 65px rgba(0, 174, 255, 0.8),
+        inset 0 0 25px rgba(255, 255, 255, 0.6);
+
+    transition:
+        background 250ms ease,
+        box-shadow 250ms ease,
+        transform 250ms ease;
+}
+
+.reactor-light {
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 0 18px white,
+        0 0 45px var(--cyan);
+
+    animation: breathe 1.8s ease-in-out infinite;
+}
+
+.particle {
+    position: absolute;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: var(--cyan);
+
+    box-shadow:
+        0 0 10px var(--cyan);
+}
+
+.particle-one {
+    top: 26px;
+    left: 90px;
+
+    animation: particle-pulse 1.4s ease-in-out infinite;
+}
+
+.particle-two {
+    right: 16px;
+    bottom: 86px;
+
+    animation: particle-pulse 1.8s ease-in-out infinite;
+}
+
+.particle-three {
+    left: 27px;
+    bottom: 49px;
+
+    animation: particle-pulse 2.1s ease-in-out infinite;
+}
+
+.status {
+    min-height: 25px;
+
+    margin: 13px 0 0;
+
+    color: var(--cyan);
+
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+
+    text-shadow:
+        0 0 12px rgba(37, 223, 255, 0.65);
+}
+
+.recording-hint {
+    margin: 7px 0 0;
+
+    color: #578ca3;
+
+    font-size: 11px;
+}
+
+.conversation-panel {
+    position: relative;
+    z-index: 2;
+
+    margin-top: 22px;
+
+    display: grid;
+    gap: 12px;
+}
+
+.message-card {
+    padding: 14px 15px;
+
+    border: 1px solid var(--border);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(7, 40, 62, 0.66),
+            rgba(2, 16, 29, 0.64)
+        );
+
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+
+    box-shadow:
+        0 9px 25px rgba(0, 0, 0, 0.24),
+        inset 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.jarvis-card {
+    border-color: rgba(44, 255, 170, 0.22);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+    color: #69cce7;
+
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.jarvis-card .message-header {
+    color: var(--green);
+}
+
+.message-card p {
+    min-height: 20px;
+
+    margin: 0;
+
+    color: #dffaff;
+
+    font-size: 14px;
+    line-height: 1.45;
+
+    white-space: pre-line;
+}
+
+.footer {
+    position: relative;
+    z-index: 2;
+
+    margin-top: auto;
+    padding-top: 18px;
+
+    display: flex;
+    justify-content: space-between;
+
+    color: #316b81;
+
+    font-size: 9px;
+    letter-spacing: 1.4px;
+}
+
+/* ESTADOS */
+
+.reactor.is-listening .reactor-center {
+    background:
+        radial-gradient(
+            circle,
+            white 0%,
+            rgba(44, 255, 170, 0.95) 28%,
+            rgba(0, 122, 76, 0.5) 65%,
+            transparent 73%
+        );
+
+    box-shadow:
+        0 0 28px var(--green),
+        0 0 90px rgba(44, 255, 170, 0.8),
+        inset 0 0 25px white;
+
+    animation: listening-pulse 700ms ease-in-out infinite;
+}
+
+.reactor.is-listening .orbit {
+    border-color: rgba(44, 255, 170, 0.85);
+
+    box-shadow:
+        0 0 18px rgba(44, 255, 170, 0.65);
+}
+
+.reactor.is-thinking .reactor-center {
+    background:
+        radial-gradient(
+            circle,
+            white 0%,
+            rgba(255, 178, 44, 0.95) 28%,
+            rgba(156, 80, 0, 0.48) 65%,
+            transparent 73%
+        );
+
+    box-shadow:
+        0 0 28px var(--orange),
+        0 0 90px rgba(255, 178, 44, 0.7),
+        inset 0 0 25px white;
+}
+
+.reactor.is-thinking .orbit-one {
+    animation-duration: 2s;
+}
+
+.reactor.is-thinking .orbit-two {
+    animation-duration: 1.5s;
+}
+
+.reactor.is-speaking .reactor-center {
+    background:
+        radial-gradient(
+            circle,
+            white 0%,
+            rgba(203, 249, 255, 0.96) 35%,
+            rgba(32, 186, 230, 0.52) 68%,
+            transparent 73%
+        );
+
+    box-shadow:
+        0 0 38px white,
+        0 0 100px rgba(37, 223, 255, 0.9),
+        inset 0 0 27px white;
+}
+
+/* ANIMACIONES */
+
+@keyframes rotate-clockwise {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes rotate-counterclockwise {
+    from {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+}
+
+@keyframes breathe {
+    0%,
+    100% {
+        transform: scale(0.86);
+        opacity: 0.72;
+    }
+
+    50% {
+        transform: scale(1.12);
+        opacity: 1;
+    }
+}
+
+@keyframes particle-pulse {
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(0.6);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.4);
+    }
+}
+
+@keyframes listening-pulse {
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.07);
+    }
+}
+
+@media (max-height: 720px) {
+    .app-shell {
+        padding-top: calc(14px + env(safe-area-inset-top));
+    }
+
+    .reactor-section {
+        margin-top: 12px;
+    }
+
+    .reactor {
+        width: 205px;
+        height: 205px;
+    }
+
+    .orbit-one {
+        width: 198px;
+        height: 198px;
+    }
+
+    .orbit-two {
+        width: 150px;
+        height: 150px;
+    }
+
+    .orbit-three {
+        width: 105px;
+        height: 105px;
+    }
+
+    .conversation-panel {
+        margin-top: 13px;
+    }
+}
