@@ -1,14 +1,21 @@
+import os
 import json
+
 from openai import OpenAI
 from dotenv import load_dotenv
+
 from session import obtener_contexto
 from datetime import datetime
 
 
 load_dotenv()
 
-client = OpenAI()
+api_key = os.getenv("OPENAI_API_KEY")
 
+if not api_key:
+    raise RuntimeError("OPENAI_API_KEY no encontrada")
+
+client = OpenAI(api_key=api_key)
 
 def interpretar_comando(texto_usuario):
 
