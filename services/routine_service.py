@@ -1,6 +1,6 @@
 from services.calendar_service import CalendarService
 from services.weather_service import WeatherService
-from spotify import controlar_spotify
+from services.spotify_service import SpotifyService
 import time
 
 
@@ -9,6 +9,7 @@ class RoutineService:
     def __init__(self):
         self.calendar = CalendarService()
         self.weather = WeatherService()
+        self.spotify = SpotifyService()
 
     def buenos_dias(self):
         eventos = self.calendar.eventos_hoy()
