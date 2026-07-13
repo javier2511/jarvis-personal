@@ -1,6 +1,6 @@
 from system import abrir_programa
 from memory import guardar_dato, consultar_dato
-from spotify import controlar_spotify
+
 from session import actualizar_estado
 from services.calendar_service import CalendarService
 from services.routine_service import RoutineService
@@ -74,9 +74,19 @@ def ejecutar_memory(accion, parametros):
     return f"Acción de memory no reconocida: {accion}"
 
 def ejecutar_spotify(accion, parametros):
-
     if accion == "abrir":
         return spotify_api.reproducir()
+
+    if accion == "reproducir":
+        return spotify_api.reproducir()
+
+    if accion == "reproducir_busqueda":
+        busqueda = parametros.get("busqueda", "").strip()
+
+        if not busqueda:
+            return "Necesito saber qué quieres reproducir."
+
+        return spotify_api.reproducir_busqueda(busqueda)
 
     if accion == "pausa":
         return spotify_api.pausar()
@@ -90,12 +100,7 @@ def ejecutar_spotify(accion, parametros):
     if accion == "cancion_actual":
         return spotify_api.cancion_actual()
 
-    if accion == "reproducir_busqueda":
-        busqueda = parametros["busqueda"]
-        return spotify_api.reproducir_busqueda(busqueda)
-
     return f"No conozco la acción de Spotify: {accion}"
-
 def ejecutar_routine(accion, parametros):
 
     if accion == "buenos_dias":
