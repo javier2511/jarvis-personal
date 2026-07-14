@@ -5,6 +5,15 @@ from pydantic import BaseModel
 from pathlib import Path
 from openai import OpenAI
 
+from fastapi import HTTPException
+from fastapi.responses import (
+    FileResponse,
+    RedirectResponse,
+    HTMLResponse
+)
+
+from services.spotify_service import SpotifyService
+
 import uuid
 import os
 
@@ -23,6 +32,7 @@ app.mount(
 jarvis = Jarvis()
 tts = TTSService()
 openai_client = OpenAI()
+spotify_service = SpotifyService()
 
 
 class Comando(BaseModel):
@@ -113,3 +123,55 @@ async def procesar_audio(audio: UploadFile = File(...)):
     finally:
         if os.path.exists(archivo_audio):
             os.remove(archivo_audio)
+
+@app.get("/spotify/login")
+def spotify_login():
+    url = spotify_service.obtener_url_autorizacion()
+
+    return RedirectResponse(url=url)
+
+
+@app.get("/spotify/callback")
+def spotify_callback(
+    code: str | None = None,
+    error: str | None = None
+):
+    if error:
+        return HTMLResponse(
+            content=f"""
+            <h2>No se pudo conectar Spotify</h2>
+            <p>{error}</p>
+            """,
+            status_code=400
+        )
+
+    if not code:
+        raise HTTPException(
+            status_code=400,
+            detail="Spotify no devolvió un código."
+        )
+
+    spotify_service.procesar_callback(code)
+
+    return HTMLResponse(
+        content="""
+        <html>
+            <body style="
+                background:#020711;
+                color:#dffcff;
+                font-family:Arial;
+                text-align:center;
+                padding-top:80px;
+            ">
+                <h1>Spotify conectado</h1>
+                <p>Ya puedes regresar a Jarvis.</p>
+                <a
+                    href="/web/"
+                    style="color:#25dfff;"
+                >
+                    Volver a Jarvis
+                </a>
+            </body>
+        </html>
+        """
+    )
