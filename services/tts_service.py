@@ -10,15 +10,28 @@ class TTSService:
     def generar_audio(self, texto, archivo):
         respuesta = self.client.audio.speech.create(
             model="gpt-4o-mini-tts",
-            voice="ash",
+            voice="echo",
             input=texto,
+            speed=1.15
             instructions="""
-Eres Jarvis, el asistente personal avanzado de Javier.
-Habla con un tono tranquilo, inteligente y seguro.
-Sé profesional pero cercano.
-Usa español mexicano natural.
-No suenes como locutor ni narrador.
+            
+Habla en español mexicano natural.
+
+Tu personalidad es la de Jarvis:
+inteligente, elegante, tranquilo y seguro.
+
+Habla a un ritmo ágil y conversacional,
+aproximadamente un 18 por ciento más rápido
+que una conversación normal.
+
+Usa pausas cortas.
+Evita pausas dramáticas.
+No suenes como locutor, narrador ni robot.
+No alargues las palabras.
+Pronuncia con claridad y naturalidad.
+Sé cálido, directo y ligeramente sofisticado.
 """
+)
         )
 
         respuesta.write_to_file(archivo)

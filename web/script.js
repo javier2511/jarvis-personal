@@ -377,3 +377,36 @@ reactorButton.addEventListener(
     }
 );
 setState("idle");
+
+async function ejecutarAccionDespues(resultado) {
+    if (!resultado) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/accion-despues", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                resultado: resultado
+            })
+        });
+
+        const data = await response.json();
+
+        if (!data.ok) {
+            console.error(
+                "Error en acción posterior:",
+                data.error
+            );
+        }
+
+    } catch (error) {
+        console.error(
+            "No se pudo ejecutar la acción posterior:",
+            error
+        );
+    }
+}

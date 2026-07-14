@@ -89,13 +89,14 @@ def home():
 @app.post("/comando")
 def ejecutar_comando(comando: Comando):
     resultado = jarvis.procesar_comando(comando.texto)
-    jarvis.accion_despues_de_hablar(resultado)
+    
     return {
         "usuario": comando.texto,
         "resultado": resultado,
         "estado": jarvis.estado
     }
-
+class AccionPosterior(BaseModel):
+    resultado: str
 @app.post("/voz")
 def generar_voz(comando: Comando):
     archivo = f"voz_{uuid.uuid4().hex}.mp3"
@@ -152,7 +153,6 @@ async def procesar_audio(audio: UploadFile = File(...)):
 
         resultado = jarvis.procesar_comando(texto)
 
-        jarvis.accion_despues_de_hablar(resultado)
 
         return {
             "usuario": texto,
@@ -364,3 +364,21 @@ def spotify_status():
         "conectado": spotify_service.esta_conectado(),
         "cache_path": spotify_service.cache_path
     }
+
+@app.post("/accion-despues")
+def ejecutar_accion_despues(datos: AccionPosterior):
+    try:
+        resultado_accion = jarvis.accion_despues_de_hablar(
+            datos.resultado
+        )
+
+        return {
+            "ok": True,
+            "resultado": resultado_accion
+        }
+
+    except Exception as error:
+        return {
+            "ok": False,
+            "error": str(error)
+        }
