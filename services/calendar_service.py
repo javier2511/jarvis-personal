@@ -75,38 +75,38 @@ class CalendarService:
     )
 
 
-def obtener_url_autorizacion(self):
-    flow = self.crear_flujo_oauth()
+    def obtener_url_autorizacion(self):
+        flow = self.crear_flujo_oauth()
 
-    authorization_url, state = flow.authorization_url(
-        access_type="offline",
-        include_granted_scopes="true",
-        prompt="consent"
-    )
+        authorization_url, state = flow.authorization_url(
+            access_type="offline",
+            include_granted_scopes="true",
+            prompt="consent"
+        )
 
-    return authorization_url, state, flow.code_verifier
+        return authorization_url, state, flow.code_verifier
 
 
-def procesar_callback(
-    self,
-    code,
-    state=None,
-    code_verifier=None
-):
-    flow = Flow.from_client_config(
-        client_config=self._client_config(),
-        scopes=SCOPES,
-        state=state,
-        redirect_uri=self.redirect_uri,
-        code_verifier=code_verifier,
-        autogenerate_code_verifier=False
-    )
+    def procesar_callback(
+        self,
+        code,
+        state=None,
+        code_verifier=None
+    ):
+        flow = Flow.from_client_config(
+            client_config=self._client_config(),
+            scopes=SCOPES,
+            state=state,
+            redirect_uri=self.redirect_uri,
+            code_verifier=code_verifier,
+            autogenerate_code_verifier=False
+        )
 
-    flow.fetch_token(code=code)
+        flow.fetch_token(code=code)
 
-    self.guardar_credenciales(
-        flow.credentials
-    )
+        self.guardar_credenciales(
+            flow.credentials
+        )
     def guardar_credenciales(self, credentials):
         self.token_path.parent.mkdir(
             parents=True,
