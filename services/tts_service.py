@@ -9,11 +9,11 @@ class TTSService:
 
     def generar_audio(self, texto, archivo):
         respuesta = self.client.audio.speech.create(
-            model="gpt-4o-mini-tts",
-            voice="echo",
-            input=texto,
-            speed=1.15
-            instructions="""
+        model="gpt-4o-mini-tts",
+        voice="echo",
+        input=texto,
+        speed=1.15
+        instructions="""
             
 Habla en español mexicano natural.
 
