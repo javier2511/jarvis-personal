@@ -12,7 +12,7 @@ class TTSService:
         model="gpt-4o-mini-tts",
         voice="echo",
         input=texto,
-        speed=1.15
+        speed=1.15,
         instructions="""
             
 Habla en español mexicano natural.
