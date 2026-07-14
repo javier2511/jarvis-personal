@@ -7,6 +7,11 @@ const jarvisText = document.getElementById("jarvisText");
 const userState = document.getElementById("userState");
 const jarvisState = document.getElementById("jarvisState");
 
+const jarvisAudio =
+    document.getElementById("jarvisAudio");
+
+let currentAudioUrl = null;
+let audioUnlocked = false;
 let mediaRecorder = null;
 let mediaStream = null;
 let audioChunks = [];
@@ -14,6 +19,8 @@ let audioChunks = [];
 let isRecording = false;
 let isProcessing = false;
 let responseAudio = null;
+
+
 
 function setState(state) {
     reactorButton.classList.remove(
@@ -160,6 +167,32 @@ function stopMediaStream() {
     mediaStream = null;
 }
 
+async function unlockAudio() {
+    if (audioUnlocked) {
+        return;
+    }
+
+    try {
+        jarvisAudio.muted = true;
+        jarvisAudio.src =
+            "data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAACcQCA";
+
+        await jarvisAudio.play();
+
+        jarvisAudio.pause();
+        jarvisAudio.currentTime = 0;
+        jarvisAudio.muted = false;
+
+        audioUnlocked = true;
+
+    } catch (error) {
+        console.warn(
+            "Safari no permitió desbloquear audio:",
+            error
+        );
+    }
+}
+
 async function processRecording() {
     try {
         const mimeType =
@@ -204,7 +237,23 @@ async function processRecording() {
         jarvisText.textContent =
             data.resultado || "No pude generar una respuesta.";
 
-        await playJarvisVoice(data.resultado);
+        try {
+            await playJarvisVoice(
+                data.resultado
+            );
+
+        } catch (voiceError) {
+            console.error(
+                "El comando funcionó, pero falló la voz:",
+                voiceError
+            );
+
+            jarvisState.textContent =
+                "RESPUESTA SIN AUDIO";
+
+            statusText.textContent =
+                "Comando completado";
+        }
 
     } catch (error) {
         console.error(error);
@@ -241,43 +290,90 @@ async function playJarvisVoice(text) {
     });
 
     if (!response.ok) {
-        throw new Error("No se pudo generar la voz.");
+        throw new Error(
+            `Error generando voz: ${response.status}`
+        );
     }
 
     const audioBlob = await response.blob();
-    const audioUrl = URL.createObjectURL(audioBlob);
 
-    responseAudio = new Audio(audioUrl);
+    if (!audioBlob.size) {
+        throw new Error(
+            "El servidor devolvió audio vacío."
+        );
+    }
 
-    responseAudio.addEventListener("ended", () => {
-        URL.revokeObjectURL(audioUrl);
+    if (currentAudioUrl) {
+        URL.revokeObjectURL(currentAudioUrl);
+    }
 
-        responseAudio = null;
+    currentAudioUrl =
+        URL.createObjectURL(audioBlob);
+
+    jarvisAudio.pause();
+    jarvisAudio.src = currentAudioUrl;
+    jarvisAudio.load();
+    jarvisAudio.volume = 1;
+    jarvisAudio.muted = false;
+
+    jarvisAudio.onended = () => {
+        if (currentAudioUrl) {
+            URL.revokeObjectURL(
+                currentAudioUrl
+            );
+
+            currentAudioUrl = null;
+        }
 
         setState("idle");
-    });
+    };
 
-    responseAudio.addEventListener("error", () => {
-        URL.revokeObjectURL(audioUrl);
-
-        responseAudio = null;
+    jarvisAudio.onerror = () => {
+        console.error(
+            "Safari no pudo reproducir el audio.",
+            jarvisAudio.error
+        );
 
         setState("idle");
-    });
+    };
 
-    await responseAudio.play();
+    try {
+        await jarvisAudio.play();
+
+    } catch (error) {
+        console.error(
+            "Error de reproducción:",
+            error.name,
+            error.message
+        );
+
+        jarvisText.textContent +=
+            "\n\nToca nuevamente el reactor para habilitar la voz.";
+
+        jarvisState.textContent =
+            "AUDIO BLOQUEADO";
+
+        setState("idle");
+
+        throw error;
+    }
 }
 
-reactorButton.addEventListener("click", () => {
-    if (isProcessing) {
-        return;
-    }
+reactorButton.addEventListener(
+    "click",
+    async () => {
 
-    if (isRecording) {
-        stopRecording();
-    } else {
-        startRecording();
-    }
-});
+        await unlockAudio();
 
+        if (isProcessing) {
+            return;
+        }
+
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    }
+);
 setState("idle");
