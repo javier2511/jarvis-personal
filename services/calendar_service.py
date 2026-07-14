@@ -65,27 +65,38 @@ class CalendarService:
             }
         }
 
-    def crear_flujo_oauth(self, state=None):
-    return Flow.from_client_config(
-        client_config=self._client_config(),
-        scopes=SCOPES,
-        state=state,
-        redirect_uri=self.redirect_uri,
-        autogenerate_code_verifier=True
-    )
-
+    def crear_flujo_oauth(
+        self,
+        state=None,
+        code_verifier=None
+    ):
+        return Flow.from_client_config(
+            client_config=self._client_config(),
+            scopes=SCOPES,
+            state=state,
+            redirect_uri=self.redirect_uri,
+            code_verifier=code_verifier,
+            autogenerate_code_verifier=(
+                code_verifier is None
+            )
+        )
 
     def obtener_url_autorizacion(self):
         flow = self.crear_flujo_oauth()
 
-        authorization_url, state = flow.authorization_url(
-            access_type="offline",
-            include_granted_scopes="true",
-            prompt="consent"
+        authorization_url, state = (
+            flow.authorization_url(
+                access_type="offline",
+                include_granted_scopes="true",
+                prompt="consent"
+            )
         )
 
-        return authorization_url, state, flow.code_verifier
-
+        return (
+            authorization_url,
+            state,
+            flow.code_verifier
+        )
 
     def procesar_callback(
         self,
@@ -93,21 +104,28 @@ class CalendarService:
         state=None,
         code_verifier=None
     ):
-        flow = Flow.from_client_config(
-            client_config=self._client_config(),
-            scopes=SCOPES,
+        if not code_verifier:
+            raise RuntimeError(
+                "No se encontró el code verifier de Google."
+            )
+
+        flow = self.crear_flujo_oauth(
             state=state,
-            redirect_uri=self.redirect_uri,
-            code_verifier=code_verifier,
-            autogenerate_code_verifier=False
+            code_verifier=code_verifier
         )
 
-        flow.fetch_token(code=code)
+        flow.fetch_token(
+            code=code
+        )
 
         self.guardar_credenciales(
             flow.credentials
         )
-    def guardar_credenciales(self, credentials):
+
+    def guardar_credenciales(
+        self,
+        credentials
+    ):
         self.token_path.parent.mkdir(
             parents=True,
             exist_ok=True
@@ -129,7 +147,12 @@ class CalendarService:
                     SCOPES
                 )
             )
-        except (ValueError, json.JSONDecodeError):
+
+        except (
+            ValueError,
+            json.JSONDecodeError,
+            OSError
+        ):
             return None
 
         if (
@@ -155,6 +178,7 @@ class CalendarService:
                 self.cargar_credenciales()
                 is not None
             )
+
         except Exception:
             return False
 
@@ -177,83 +201,22 @@ class CalendarService:
         )
 
     def eventos_hoy(self):
-        service = self.obtener_servicio()
-
         zona = ZoneInfo(
             "America/Mexico_City"
         )
 
-        hoy = datetime.now(zona).date()
+        hoy = datetime.now(
+            zona
+        ).date()
 
-        inicio_dia = datetime.combine(
-            hoy,
-            time.min,
-            tzinfo=zona
+        return self.eventos_fecha(
+            hoy.isoformat()
         )
 
-        fin_dia = datetime.combine(
-            hoy,
-            time.max,
-            tzinfo=zona
-        )
-
-        resultado = (
-            service.events()
-            .list(
-                calendarId="primary",
-                timeMin=inicio_dia.isoformat(),
-                timeMax=fin_dia.isoformat(),
-                maxResults=20,
-                singleEvents=True,
-                orderBy="startTime"
-            )
-            .execute()
-        )
-
-        eventos = resultado.get(
-            "items",
-            []
-        )
-
-        if not eventos:
-            return "No tienes eventos hoy."
-
-        respuesta = [
-            "Tus eventos de hoy son:"
-        ]
-
-        for evento in eventos:
-            inicio = evento["start"].get(
-                "dateTime",
-                evento["start"].get("date")
-            )
-
-            titulo = evento.get(
-                "summary",
-                "Sin título"
-            )
-
-            if inicio and "T" in inicio:
-                fecha = datetime.fromisoformat(
-                    inicio.replace(
-                        "Z",
-                        "+00:00"
-                    )
-                )
-
-                hora = fecha.astimezone(
-                    zona
-                ).strftime("%H:%M")
-            else:
-                hora = "Todo el día"
-
-            respuesta.append(
-                f"- {hora} - {titulo}"
-            )
-
-        return "\n".join(respuesta)
-
-    def eventos_fecha(self, fecha_iso):
+    def eventos_fecha(
+        self,
+        fecha_iso
+    ):
         service = self.obtener_servicio()
 
         zona = ZoneInfo(
@@ -295,6 +258,12 @@ class CalendarService:
         )
 
         if not eventos:
+            if (
+                fecha
+                == datetime.now(zona).date()
+            ):
+                return "No tienes eventos hoy."
+
             return (
                 "No tienes eventos para "
                 f"{fecha.strftime('%d/%m/%Y')}."
@@ -325,9 +294,16 @@ class CalendarService:
                     )
                 )
 
-                hora = fecha_inicio.astimezone(
-                    zona
-                ).strftime("%H:%M")
+                fecha_local = (
+                    fecha_inicio.astimezone(
+                        zona
+                    )
+                )
+
+                hora = fecha_local.strftime(
+                    "%H:%M"
+                )
+
             else:
                 hora = "Todo el día"
 
@@ -335,7 +311,9 @@ class CalendarService:
                 f"- {hora} - {titulo}"
             )
 
-        return "\n".join(respuesta)
+        return "\n".join(
+            respuesta
+        )
 
     def crear_evento(
         self,
@@ -370,15 +348,22 @@ class CalendarService:
             .execute()
         )
 
-        return (
-            "Evento creado: "
-            + evento_creado.get(
+        titulo_creado = (
+            evento_creado.get(
                 "summary",
                 titulo
             )
         )
 
-    def buscar_eventos(self, texto):
+        return (
+            f"Evento creado: "
+            f"{titulo_creado}"
+        )
+
+    def buscar_eventos(
+        self,
+        texto
+    ):
         service = self.obtener_servicio()
 
         zona = ZoneInfo(
@@ -449,6 +434,7 @@ class CalendarService:
                         "%d/%m/%Y %H:%M"
                     )
                 )
+
             else:
                 fecha_texto = (
                     f"{inicio} - Todo el día"
@@ -458,7 +444,9 @@ class CalendarService:
                 f"- {fecha_texto} - {titulo}"
             )
 
-        return "\n".join(respuesta)
+        return "\n".join(
+            respuesta
+        )
 
     def mover_evento(
         self,
@@ -517,15 +505,20 @@ class CalendarService:
             .execute()
         )
 
-        return (
-            "Moví el evento: "
-            + actualizado.get(
-                "summary",
-                "Sin título"
-            )
+        titulo = actualizado.get(
+            "summary",
+            "Sin título"
         )
 
-    def eliminar_evento(self, texto):
+        return (
+            f"Moví el evento: "
+            f"{titulo}"
+        )
+
+    def eliminar_evento(
+        self,
+        texto
+    ):
         service = self.obtener_servicio()
 
         resultado = (
@@ -567,4 +560,7 @@ class CalendarService:
             .execute()
         )
 
-        return f"Eliminé el evento: {titulo}"
+        return (
+            f"Eliminé el evento: "
+            f"{titulo}"
+        )
