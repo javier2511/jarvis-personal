@@ -16,9 +16,13 @@ SCOPES = (
 class SpotifyService:
 
     def __init__(self):
-        cache_path = os.getenv(
+        self.cache_path = os.getenv(
             "SPOTIFY_CACHE_PATH",
-            "/tmp/spotify_cache"
+            "/app/data/spotify_cache"
+        )
+
+        self.cache_handler = CacheFileHandler(
+            cache_path=self.cache_path
         )
 
         self.auth_manager = SpotifyOAuth(
@@ -26,23 +30,32 @@ class SpotifyService:
             client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
             redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI"),
             scope=SCOPES,
-            cache_handler=CacheFileHandler(
-                cache_path=cache_path
-            ),
+            cache_handler=self.cache_handler,
             open_browser=False
         )
-
     def obtener_url_autorizacion(self):
         return self.auth_manager.get_authorize_url()
 
     def procesar_callback(self, codigo):
-        self.auth_manager.get_access_token(
+        token_info = self.auth_manager.get_access_token(
             code=codigo,
             check_cache=False
         )
 
+        if not token_info:
+            raise RuntimeError(
+                "Spotify no devolvió un token."
+            )
+
+        # Guardado explícito en el volumen de Railway
+        self.cache_handler.save_token_to_cache(
+            token_info
+        )
+
+        return token_info
+
     def cliente(self):
-        token_info = self.auth_manager.get_cached_token()
+        token_info = self.cache_handler.get_cached_token()
 
         if not token_info:
             raise RuntimeError(
@@ -50,10 +63,34 @@ class SpotifyService:
                 "Abre /spotify/login para autorizarlo."
             )
 
+        if self.auth_manager.is_token_expired(token_info):
+            refresh_token = token_info.get("refresh_token")
+
+            if not refresh_token:
+                raise RuntimeError(
+                    "El token de Spotify expiró y no tiene refresh token. "
+                    "Vuelve a conectar Spotify."
+                )
+
+            token_info = self.auth_manager.refresh_access_token(
+                refresh_token
+            )
+
+            self.cache_handler.save_token_to_cache(
+                token_info
+            )
+
         return spotipy.Spotify(
-            auth_manager=self.auth_manager
+            auth=token_info["access_token"]
         )
 
+    def esta_conectado(self):
+        token_info = self.cache_handler.get_cached_token()
+
+        return bool(
+            token_info
+            and token_info.get("access_token")
+        )
     def dispositivos(self):
         spotify = self.cliente()
         return spotify.devices().get("devices", [])

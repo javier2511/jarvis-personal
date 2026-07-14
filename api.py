@@ -358,3 +358,9 @@ def google_status():
             calendar_service.esta_conectado()
         )
     }
+@app.get("/spotify/status")
+def spotify_status():
+    return {
+        "conectado": spotify_service.esta_conectado(),
+        "cache_path": spotify_service.cache_path
+    }
