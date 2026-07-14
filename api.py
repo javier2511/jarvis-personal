@@ -218,19 +218,18 @@ def spotify_callback(
 
 @app.get("/google/login")
 def google_login(request: Request):
-    authorization_url, state = (
-        calendar_service
-        .obtener_url_autorizacion()
-    )
+    (
+        authorization_url,
+        state,
+        code_verifier
+    ) = calendar_service.obtener_url_autorizacion()
 
-    request.session[
-        "google_oauth_state"
-    ] = state
+    request.session["google_oauth_state"] = state
+    request.session["google_code_verifier"] = code_verifier
 
     return RedirectResponse(
         url=authorization_url
     )
-
 
 @app.get("/google/callback")
 def google_callback(
@@ -289,13 +288,34 @@ def google_callback(
             )
         )
 
+    
+    code_verifier = request.session.get(
+    "google_code_verifier"  
+    )
+
+    if not code_verifier:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "No se encontró el code verifier "
+                "de Google. Inicia nuevamente desde "
+                "/google/login."
+            )
+        )
+
     calendar_service.procesar_callback(
-        code=code,
-        state=state
+    code=code,
+    state=state,
+    code_verifier=code_verifier
     )
 
     request.session.pop(
         "google_oauth_state",
+        None
+    )
+
+    request.session.pop(
+        "google_code_verifier",
         None
     )
 
