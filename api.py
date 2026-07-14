@@ -14,6 +14,29 @@ from fastapi.responses import (
 
 from services.spotify_service import SpotifyService
 
+from fastapi import (
+    FastAPI,
+    UploadFile,
+    File,
+    HTTPException,
+    Request
+)
+
+from fastapi.staticfiles import StaticFiles
+
+from fastapi.responses import (
+    FileResponse,
+    RedirectResponse,
+    HTMLResponse
+)
+
+from starlette.middleware.sessions import (
+    SessionMiddleware
+)
+
+from services.calendar_service import (
+    CalendarService
+)
 import uuid
 import os
 
@@ -21,6 +44,22 @@ from jarvis import Jarvis
 from services.tts_service import TTSService
 
 app = FastAPI()
+
+session_secret = os.getenv(
+    "SESSION_SECRET"
+)
+
+if not session_secret:
+    raise RuntimeError(
+        "Falta SESSION_SECRET en Railway."
+    )
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=session_secret,
+    same_site="lax",
+    https_only=True
+)
 app.mount(
     "/web",
     StaticFiles(
@@ -33,6 +72,7 @@ jarvis = Jarvis()
 tts = TTSService()
 openai_client = OpenAI()
 spotify_service = SpotifyService()
+calendar_service = CalendarService()
 
 
 class Comando(BaseModel):
@@ -175,3 +215,126 @@ def spotify_callback(
         </html>
         """
     )
+
+@app.get("/google/login")
+def google_login(request: Request):
+    authorization_url, state = (
+        calendar_service
+        .obtener_url_autorizacion()
+    )
+
+    request.session[
+        "google_oauth_state"
+    ] = state
+
+    return RedirectResponse(
+        url=authorization_url
+    )
+
+
+@app.get("/google/callback")
+def google_callback(
+    request: Request,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None
+):
+    if error:
+        return HTMLResponse(
+            content=f"""
+            <html>
+                <body style="
+                    background:#020711;
+                    color:#dffcff;
+                    font-family:Arial;
+                    text-align:center;
+                    padding-top:80px;
+                ">
+                    <h1>No se pudo conectar Google</h1>
+                    <p>{error}</p>
+                    <a
+                        href="/web/"
+                        style="color:#25dfff;"
+                    >
+                        Volver a Jarvis
+                    </a>
+                </body>
+            </html>
+            """,
+            status_code=400
+        )
+
+    if not code:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Google no devolvió "
+                "un código."
+            )
+        )
+
+    expected_state = request.session.get(
+        "google_oauth_state"
+    )
+
+    if (
+        not expected_state
+        or state != expected_state
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "El estado OAuth de Google "
+                "no coincide."
+            )
+        )
+
+    calendar_service.procesar_callback(
+        code=code,
+        state=state
+    )
+
+    request.session.pop(
+        "google_oauth_state",
+        None
+    )
+
+    return HTMLResponse(
+        content="""
+        <html>
+            <body style="
+                background:#020711;
+                color:#dffcff;
+                font-family:Arial;
+                text-align:center;
+                padding-top:80px;
+            ">
+                <h1>Google Calendar conectado</h1>
+
+                <p>
+                    Jarvis ya puede consultar
+                    y administrar tu calendario.
+                </p>
+
+                <a
+                    href="/web/"
+                    style="
+                        color:#25dfff;
+                        font-size:18px;
+                    "
+                >
+                    Volver a Jarvis
+                </a>
+            </body>
+        </html>
+        """
+    )
+
+
+@app.get("/google/status")
+def google_status():
+    return {
+        "conectado": (
+            calendar_service.esta_conectado()
+        )
+    }
