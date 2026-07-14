@@ -32,7 +32,7 @@ Pronuncia con claridad y naturalidad.
 Sé cálido, directo y ligeramente sofisticado.
 """
 )
-        )
+        
 
         respuesta.write_to_file(archivo)
 
