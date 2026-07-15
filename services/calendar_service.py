@@ -314,7 +314,116 @@ class CalendarService:
         return "\n".join(
             respuesta
         )
+    def proximo_evento(self):
+        service = self.obtener_servicio()
 
+        zona = ZoneInfo("America/Mexico_City")
+        ahora = datetime.now(zona)
+
+        resultado = (
+            service.events()
+            .list(
+                calendarId="primary",
+                timeMin=ahora.isoformat(),
+                maxResults=10,
+                singleEvents=True,
+                orderBy="startTime"
+            )
+            .execute()
+        )
+
+        eventos = resultado.get("items", [])
+
+        if not eventos:
+            return "No tienes próximos eventos en tu calendario."
+
+        evento = eventos[0]
+
+        titulo = evento.get(
+            "summary",
+            "Evento sin título"
+        )
+
+        inicio = evento["start"].get(
+            "dateTime",
+            evento["start"].get("date")
+        )
+
+        if not inicio:
+            return f"Tu siguiente evento es {titulo}."
+
+        if "T" not in inicio:
+            fecha_evento = datetime.fromisoformat(
+                inicio
+            ).date()
+
+            if fecha_evento == ahora.date():
+                return (
+                    f"Tu siguiente evento es {titulo} "
+                    "y dura todo el día."
+                )
+
+            return (
+                f"Tu siguiente evento es {titulo}, "
+                f"el {fecha_evento.strftime('%d/%m/%Y')}, "
+                "durante todo el día."
+            )
+
+        fecha_evento = datetime.fromisoformat(
+            inicio.replace("Z", "+00:00")
+        ).astimezone(zona)
+
+        diferencia = fecha_evento - ahora
+        minutos = max(
+            0,
+            round(diferencia.total_seconds() / 60)
+        )
+
+        hora = fecha_evento.strftime("%H:%M")
+
+        if fecha_evento.date() == ahora.date():
+            if minutos < 1:
+                return (
+                    f"Tu evento {titulo} "
+                    "está comenzando ahora."
+                )
+
+            if minutos < 60:
+                return (
+                    f"Lo siguiente es {titulo}, "
+                    f"a las {hora}. "
+                    f"Faltan aproximadamente {minutos} minutos."
+                )
+
+            horas, minutos_restantes = divmod(
+                minutos,
+                60
+            )
+
+            tiempo_texto = (
+                f"{horas} "
+                f"{'hora' if horas == 1 else 'horas'}"
+            )
+
+            if minutos_restantes:
+                tiempo_texto += (
+                    f" con {minutos_restantes} minutos"
+                )
+
+            return (
+                f"Lo siguiente es {titulo}, "
+                f"a las {hora}. "
+                f"Faltan aproximadamente {tiempo_texto}."
+            )
+
+        fecha_texto = fecha_evento.strftime(
+            "%d/%m/%Y"
+        )
+
+        return (
+            f"Tu siguiente evento es {titulo}, "
+            f"el {fecha_texto} a las {hora}."
+        )
     def crear_evento(
         self,
         titulo,

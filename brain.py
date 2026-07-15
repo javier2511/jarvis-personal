@@ -179,6 +179,7 @@ Acciones:
 - buscar_eventos
 - mover_evento
 - eliminar_evento
+- proximo_evento
 
 
 Ejemplo:
@@ -262,7 +263,38 @@ Respuesta:
  }
 }
 
+Usuario:
+"qué sigue"
 
+Respuesta:
+
+{
+ "modulo": "calendar",
+ "accion": "proximo_evento",
+ "parametros": {}
+}
+
+Usuario:
+"cuál es mi próxima reunión"
+
+Respuesta:
+
+{
+ "modulo": "calendar",
+ "accion": "proximo_evento",
+ "parametros": {}
+}
+
+Usuario:
+"cuánto falta para mi siguiente evento"
+
+Respuesta:
+
+{
+ "modulo": "calendar",
+ "accion": "proximo_evento",
+ "parametros": {}
+}
 
 5. routine
 

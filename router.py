@@ -11,10 +11,11 @@ routine = RoutineService()
 spotify_api = SpotifyService()
 
 def ejecutar_calendar(accion, parametros):
-
     if accion == "eventos_hoy":
         return calendar.eventos_hoy()
-
+    if accion == "proximo_evento":
+        return calendar.proximo_evento()
+    
 
     if accion == "crear_evento":
 
