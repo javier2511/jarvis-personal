@@ -168,18 +168,26 @@ class NewsService:
             limite=limite
         )
 
-    def noticias_por_intereses(
-        self,
-        limite=5
-    ):
+    def noticias_por_intereses(self, limite=5):
         consulta = " OR ".join(
             f'"{interes}"'
             for interes in self.intereses
         )
 
         try:
-            articulos = self.buscar(
-                consulta=consulta,
+            datos = self._hacer_peticion(
+                "search",
+                {
+                    "q": consulta,
+                    "lang": "es",
+                    "country": "mx",
+                    "max": max(limite, 10),
+                    "sortby": "publishedAt"
+                }
+            )
+
+            articulos = self._limpiar_articulos(
+                datos.get("articles", []),
                 limite=limite
             )
 
@@ -194,9 +202,11 @@ class NewsService:
 
         return self.titulares(
             categoria="general",
-            limite=limite
+            limite=limite,
+            pais="mx",
+            idioma="es"
         )
-
+        
     def resumen_para_voz(
         self,
         articulos,
