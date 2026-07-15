@@ -1,5 +1,3 @@
-import threading
-import time
 
 from services.voice_service import VoiceService
 from services.ai_service import AIService
@@ -75,34 +73,37 @@ class Jarvis:
             return f"Ocurrió un error: {error}"
 
     def accion_despues_de_hablar(self, resultado):
+        if not resultado:
+            return None
+
         texto = resultado.lower()
 
-        if (
-            "ahora iniciaré spotify" in texto
-            or "ahora abrire spotify" in texto
-            or "ahora abriré spotify" in texto
-        ):
-            def tarea():
-                time.sleep(1.5)
+        debe_iniciar_spotify = any(
+            frase in texto
+            for frase in (
+                "ahora iniciaré spotify",
+                "ahora iniciare spotify",
+                "ahora abriré spotify",
+                "ahora abrire spotify"
+            )
+        )
 
-                self.actions.ejecutar({
-                    "modulo": "spotify",
-                    "accion": "abrir",
-                    "parametros": {}
-                })
+        if not debe_iniciar_spotify:
+            return None
 
-                time.sleep(4)
+        try:
+            return self.actions.ejecutar({
+                "modulo": "spotify",
+                "accion": "abrir",
+                "parametros": {}
+            })
 
-                self.actions.ejecutar({
-                    "modulo": "spotify",
-                    "accion": "pausa",
-                    "parametros": {}
-                })
-
-            hilo = threading.Thread(target=tarea)
-            hilo.daemon = True
-            hilo.start()
-
+        except Exception as error:
+            print(
+                "No se pudo iniciar Spotify "
+                f"después de la rutina: {error}"
+            )
+            return None
     def ciclo_voz(self):
         texto_usuario = self.escuchar()
 
