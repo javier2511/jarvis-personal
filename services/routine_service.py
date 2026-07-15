@@ -3,6 +3,7 @@ import os
 from services.calendar_service import CalendarService
 from services.weather_service import WeatherService
 from services.traffic_service import TrafficService
+from services.news_service import NewsService
 
 
 class RoutineService:
@@ -11,6 +12,7 @@ class RoutineService:
         self.calendar = CalendarService()
         self.weather = WeatherService()
         self.traffic = TrafficService()
+        self.news = NewsService()
 
     def buenos_dias(self):
         eventos = self.calendar.eventos_hoy()
@@ -19,13 +21,8 @@ class RoutineService:
             "Ciudad de México"
         )
 
-        origen = os.getenv(
-            "HOME_ORIGIN"
-        )
-
-        destino = os.getenv(
-            "WORK_DESTINATION"
-        )
+        origen = os.getenv("HOME_ORIGIN")
+        destino = os.getenv("WORK_DESTINATION")
 
         try:
             trafico = self.traffic.resumen_ruta(
@@ -45,6 +42,22 @@ class RoutineService:
                 "en este momento."
             )
 
+        try:
+            noticias = self.news.resumen_del_dia(
+                limite=3
+            )
+
+        except Exception as error:
+            print(
+                "Error consultando noticias:",
+                error
+            )
+
+            noticias = (
+                "No pude consultar las noticias "
+                "en este momento."
+            )
+
         return f"""
 Buenos días, Javier.
 
@@ -56,6 +69,9 @@ Clima:
 
 Tráfico:
 {trafico}
+
+Noticias:
+{noticias}
 
 Ahora iniciaré Spotify para empezar el día.
 """.strip()
