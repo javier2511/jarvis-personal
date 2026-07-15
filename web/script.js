@@ -316,16 +316,15 @@ async function playJarvisVoice(text) {
     jarvisAudio.volume = 1;
     jarvisAudio.muted = false;
 
-    jarvisAudio.onended = () => {
-        if (currentAudioUrl) {
-            URL.revokeObjectURL(
-                currentAudioUrl
-            );
+    jarvisAudio.onended = async () => {
+    if (currentAudioUrl) {
+        URL.revokeObjectURL(currentAudioUrl);
+        currentAudioUrl = null;
+    }
 
-            currentAudioUrl = null;
-        }
+    setState("idle");
 
-        setState("idle");
+    await ejecutarAccionDespues(text);
     };
 
     jarvisAudio.onerror = () => {
