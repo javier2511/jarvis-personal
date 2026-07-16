@@ -5,10 +5,12 @@ from session import actualizar_estado
 from services.calendar_service import CalendarService
 from services.routine_service import RoutineService
 from services.spotify_service import SpotifyService
+from services.sports_service import SportsService
 
 calendar = CalendarService()
 routine = RoutineService()
 spotify_api = SpotifyService()
+sports = SportsService()
 
 def ejecutar_calendar(accion, parametros):
     if accion == "eventos_hoy":
@@ -109,6 +111,39 @@ def ejecutar_routine(accion, parametros):
 
     return "No conozco esa rutina."
 
+def ejecutar_sports(accion, parametros):
+    equipo = parametros.get(
+        "equipo",
+        ""
+    ).strip()
+
+    if not equipo:
+        return (
+            "Necesito saber de qué equipo "
+            "quieres información."
+        )
+
+    if accion == "proximo_evento":
+        return sports.proximo_evento(
+            equipo
+        )
+
+    if accion == "ultimo_resultado":
+        return sports.ultimo_resultado(
+            equipo
+        )
+
+    if accion == "noticias_equipo":
+        return sports.noticias_equipo(
+            equipo=equipo,
+            limite=3
+        )
+
+    return (
+        f"No conozco la acción deportiva: "
+        f"{accion}"
+    )
+
 def ejecutar_interpretacion(interpretacion):
     modulo = interpretacion["modulo"]
     accion = interpretacion["accion"]
@@ -120,7 +155,8 @@ def ejecutar_interpretacion(interpretacion):
         "memory": ejecutar_memory,
         "spotify": ejecutar_spotify,
         "calendar": ejecutar_calendar,
-        "routine": ejecutar_routine
+        "routine": ejecutar_routine,
+        "sports": ejecutar_sports
     }
 
 

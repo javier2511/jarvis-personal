@@ -315,7 +315,75 @@ Respuesta:
 }
 
 
+6. sports
 
+Consulta información deportiva.
+
+Acciones:
+
+- proximo_evento
+- ultimo_resultado
+- noticias_equipo
+
+Usuario:
+"cuándo juegan los Giants"
+
+Respuesta:
+{
+ "modulo": "sports",
+ "accion": "proximo_evento",
+ "parametros": {
+    "equipo": "New York Giants"
+ }
+}
+
+Usuario:
+"cómo quedaron los Giants"
+
+Respuesta:
+{
+ "modulo": "sports",
+ "accion": "ultimo_resultado",
+ "parametros": {
+    "equipo": "New York Giants"
+ }
+}
+
+Usuario:
+"dame noticias de los Giants"
+
+Respuesta:
+{
+ "modulo": "sports",
+ "accion": "noticias_equipo",
+ "parametros": {
+    "equipo": "New York Giants"
+ }
+}
+
+Usuario:
+"cuándo juega México"
+
+Respuesta:
+{
+ "modulo": "sports",
+ "accion": "proximo_evento",
+ "parametros": {
+    "equipo": "Mexico"
+ }
+}
+
+Usuario:
+"cuándo juega el Club America"
+
+Respuesta:
+{
+ "modulo": "sports",
+ "accion": "proximo_evento",
+ "parametros": {
+    "equipo": "Club America de México"
+ }
+}
 ========================
 
 Si no sabes qué hacer:
