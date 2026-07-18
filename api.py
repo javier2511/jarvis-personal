@@ -4,6 +4,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from pathlib import Path
 from openai import OpenAI
+from fastapi.responses import HTMLResponse
 
 from fastapi import HTTPException
 from fastapi.responses import (
@@ -382,3 +383,24 @@ def ejecutar_accion_despues(datos: AccionPosterior):
             "ok": False,
             "error": str(error)
         }
+
+@app.get("/privacy", response_class=HTMLResponse)
+def privacy():
+
+    with open(
+        "web/legal/privacy.html",
+        encoding="utf-8"
+    ) as f:
+
+        return f.read()
+
+
+@app.get("/terms", response_class=HTMLResponse)
+def terms():
+
+    with open(
+        "web/legal/terms.html",
+        encoding="utf-8"
+    ) as f:
+
+        return f.read()
