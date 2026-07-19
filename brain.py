@@ -1,413 +1,209 @@
-import os
 import json
-
-from openai import OpenAI
-from dotenv import load_dotenv
-
-from session import obtener_contexto
+import os
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
+from dotenv import load_dotenv
+from openai import OpenAI
+from session import obtener_contexto
 
 
 load_dotenv()
 
-api_key = os.getenv("OPENAI_API_KEY")
+API_KEY = os.getenv("OPENAI_API_KEY")
+MODEL = os.getenv("JARVIS_MODEL", "gpt-5.5")
 
-if not api_key:
+if not API_KEY:
     raise RuntimeError("OPENAI_API_KEY no encontrada")
 
-client = OpenAI(api_key=api_key)
+client = OpenAI(api_key=API_KEY)
 
-def interpretar_comando(texto_usuario):
 
-    contexto = obtener_contexto()
-
-    respuesta = client.responses.create(
-
-        model="gpt-5.5",
-
-        instructions="""
-
+INSTRUCCIONES = """
 Eres el cerebro de Jarvis.
 
-Tu trabajo es convertir el mensaje del usuario en un JSON válido.
-
-No ejecutes acciones.
-No respondas conversaciones.
-Solo genera JSON.
-
-Usa el contexto de sesión para entender referencias incompletas.
-
-Ejemplo:
-
-Contexto:
-{
- "ultimo_modulo": "spotify",
- "ultima_accion": "abrir"
-}
-
-Usuario:
-"siguiente"
-
-Respuesta:
-{
- "modulo": "spotify",
- "accion": "siguiente",
- "parametros": {}
-}
-
+Convierte el mensaje del usuario en un único objeto JSON válido.
+No ejecutes acciones. No agregues markdown ni explicaciones.
 
 Formato obligatorio:
-
 {
- "modulo": "",
- "accion": "",
- "parametros": {}
+  "modulo": "",
+  "accion": "",
+  "parametros": {}
 }
 
+Usa el contexto de sesión y la memoria personal únicamente para interpretar
+referencias incompletas. Nunca inventes recuerdos.
 
-========================
-MÓDULOS DISPONIBLES
-========================
+MÓDULOS Y ACCIONES
 
-
-1. system
-
-Controla funciones del sistema operativo.
-
-Acciones:
-
+system:
 - abrir_programa
+Parámetros: programa
 
-Ejemplo:
-
-Usuario:
-"abre bloc de notas"
-
-Respuesta:
-
-{
- "modulo": "system",
- "accion": "abrir_programa",
- "parametros": {
-    "programa": "notepad"
- }
-}
-
-
-------------------------
-
-
-2. memory
-
-Controla memoria de Jarvis.
-
-Acciones:
-
+memory:
 - guardar
+  Parámetros:
+  - contenido: recuerdo completo y autosuficiente
+  - categoria: personal, trabajo, preferencias, relaciones, planes u otro
+  - importancia: entero de 1 a 5
+  - etiquetas: lista de palabras
 - consultar
+  Parámetros: consulta
+- listar
+  Parámetros: opcionales
+- eliminar
+  Parámetros: consulta
 
-Ejemplo:
-
-Usuario:
-"recuerda que mi jefe es Andrés"
-
-Respuesta:
-
-{
- "modulo": "memory",
- "accion": "guardar",
- "parametros": {
-    "clave": "jefe",
-    "valor": "Andrés"
- }
-}
-
-
-------------------------
-
-
-3. spotify
-
-Controla Spotify.
-
-Acciones:
-
+spotify:
 - abrir
 - pausa
 - siguiente
 - anterior
-- subir_volumen
-- bajar_volumen
-- reproducir_busqueda
 - cancion_actual
+- reproducir_busqueda
+Parámetros de reproducir_busqueda: busqueda
 
-Ejemplo:
-
-Usuario:
-"pausa la música"
-
-Respuesta:
-
-{
- "modulo": "spotify",
- "accion": "pausa",
- "parametros": {}
-}
-
-Usuario:
-"reproduce Eminem"
-
-Respuesta:
-{
- "modulo": "spotify",
- "accion": "reproducir_busqueda",
- "parametros": {
-    "busqueda": "Eminem"
- }
-}
-------------------------
-
-
-4. calendar
-
-Controla calendario del usuario.
-
-Acciones:
-
+calendar:
 - eventos_hoy
+- proximo_evento
 - crear_evento
 - buscar_eventos
 - mover_evento
 - eliminar_evento
-- proximo_evento
 
-
-Ejemplo:
-
-Usuario:
-"qué tengo hoy"
-
-Respuesta:
-
-{
- "modulo": "calendar",
- "accion": "eventos_hoy",
- "parametros": {}
-}
-
-{
- "modulo":"calendar",
- "accion":"crear_evento",
- "parametros":{
-    "titulo":"Junta con Andrés",
-    "fecha":"..."
- }
-}
-
-Usuario:
-"agenda junta con Andrés mañana a las 5"
-
-Respuesta:
-
-{
- "modulo": "calendar",
- "accion": "crear_evento",
- "parametros": {
-    "titulo": "Junta con Andrés",
-    "inicio": "2026-07-02T17:00:00",
-    "fin": "2026-07-02T18:00:00"
- }
-}
-
-
-
-Usuario:
-"busca mis juntas con Andrés"
-
-Respuesta:
-
-{
- "modulo":"calendar",
- "accion":"buscar_eventos",
- "parametros":{
-    "texto":"Andrés"
- }
-}
-
-Usuario:
-"mueve mi evento prueba a mañana a las 6"
-
-Respuesta:
-
-{
- "modulo": "calendar",
- "accion": "mover_evento",
- "parametros": {
-    "texto": "prueba",
-    "nuevo_inicio": "2026-07-07T18:00:00",
-    "nuevo_fin": "2026-07-07T19:00:00"
- }
-}
-
-
-Usuario:
-"elimina mi junta prueba"
-
-Respuesta:
-
-{
- "modulo":"calendar",
- "accion":"eliminar_evento",
- "parametros":{
-    "texto":"prueba"
- }
-}
-
-Usuario:
-"qué sigue"
-
-Respuesta:
-
-{
- "modulo": "calendar",
- "accion": "proximo_evento",
- "parametros": {}
-}
-
-Usuario:
-"cuál es mi próxima reunión"
-
-Respuesta:
-
-{
- "modulo": "calendar",
- "accion": "proximo_evento",
- "parametros": {}
-}
-
-Usuario:
-"cuánto falta para mi siguiente evento"
-
-Respuesta:
-
-{
- "modulo": "calendar",
- "accion": "proximo_evento",
- "parametros": {}
-}
-
-5. routine
-
-Acciones:
+routine:
 - buenos_dias
 
-Ejemplo:
-
-Usuario:
-"buenos días"
-
-Respuesta:
-
-{
- "modulo": "routine",
- "accion": "buenos_dias",
- "parametros": {}
-}
-
-
-6. sports
-
-Consulta información deportiva.
-
-Acciones:
-
+sports:
 - proximo_evento
 - ultimo_resultado
 - noticias_equipo
+Parámetros: equipo
 
-Usuario:
-"cuándo juegan los Giants"
+none:
+- none
 
-Respuesta:
+EJEMPLOS
+
+Usuario: recuerda que mi jefe se llama Andrés
 {
- "modulo": "sports",
- "accion": "proximo_evento",
- "parametros": {
+  "modulo": "memory",
+  "accion": "guardar",
+  "parametros": {
+    "contenido": "El jefe de Javier se llama Andrés.",
+    "categoria": "trabajo",
+    "importancia": 4,
+    "etiquetas": ["jefe", "Andrés", "trabajo"]
+  }
+}
+
+Usuario: qué recuerdas de mi novia
+{
+  "modulo": "memory",
+  "accion": "consultar",
+  "parametros": {
+    "consulta": "novia"
+  }
+}
+
+Usuario: qué recuerdas de mí
+{
+  "modulo": "memory",
+  "accion": "listar",
+  "parametros": {}
+}
+
+Usuario: olvida que entreno los martes
+{
+  "modulo": "memory",
+  "accion": "eliminar",
+  "parametros": {
+    "consulta": "entreno los martes"
+  }
+}
+
+Usuario: reproduce Eminem
+{
+  "modulo": "spotify",
+  "accion": "reproducir_busqueda",
+  "parametros": {
+    "busqueda": "Eminem"
+  }
+}
+
+Usuario: cuándo juegan los Giants
+{
+  "modulo": "sports",
+  "accion": "proximo_evento",
+  "parametros": {
     "equipo": "New York Giants"
- }
+  }
 }
 
-Usuario:
-"cómo quedaron los Giants"
-
-Respuesta:
+Cuando no corresponda ninguna acción:
 {
- "modulo": "sports",
- "accion": "ultimo_resultado",
- "parametros": {
-    "equipo": "New York Giants"
- }
+  "modulo": "none",
+  "accion": "none",
+  "parametros": {}
 }
+"""
 
-Usuario:
-"dame noticias de los Giants"
 
-Respuesta:
-{
- "modulo": "sports",
- "accion": "noticias_equipo",
- "parametros": {
-    "equipo": "New York Giants"
- }
-}
+def _extraer_json(texto):
+    texto = (texto or "").strip()
 
-Usuario:
-"cuándo juega México"
+    if texto.startswith("```"):
+        lineas = texto.splitlines()
+        if lineas and lineas[0].startswith("```"):
+            lineas = lineas[1:]
+        if lineas and lineas[-1].strip() == "```":
+            lineas = lineas[:-1]
+        texto = "\n".join(lineas).strip()
 
-Respuesta:
-{
- "modulo": "sports",
- "accion": "proximo_evento",
- "parametros": {
-    "equipo": "Mexico"
- }
-}
+    inicio = texto.find("{")
+    fin = texto.rfind("}")
 
-Usuario:
-"cuándo juega el Club America"
+    if inicio == -1 or fin == -1 or fin < inicio:
+        raise ValueError("La IA no devolvió un JSON válido.")
 
-Respuesta:
-{
- "modulo": "sports",
- "accion": "proximo_evento",
- "parametros": {
-    "equipo": "Club America de México"
- }
-}
-========================
+    datos = json.loads(texto[inicio:fin + 1])
 
-Si no sabes qué hacer:
+    if not isinstance(datos, dict):
+        raise ValueError("La interpretación debe ser un objeto JSON.")
 
-{
- "modulo": "none",
- "accion": "none",
- "parametros": {}
-}
+    datos.setdefault("modulo", "none")
+    datos.setdefault("accion", "none")
+    datos.setdefault("parametros", {})
 
-        """,
+    if not isinstance(datos["parametros"], dict):
+        datos["parametros"] = {}
 
+    return datos
+
+
+def interpretar_comando(texto_usuario, memoria_contexto=""):
+    contexto_sesion = obtener_contexto()
+
+    zona = ZoneInfo("America/Mexico_City")
+    fecha_actual = datetime.now(zona).isoformat()
+
+    respuesta = client.responses.create(
+        model=MODEL,
+        instructions=INSTRUCCIONES,
         input=f"""
 Fecha actual:
-{datetime.now()}
+{fecha_actual}
 
-Contexto actual:
-{contexto}
+Contexto de sesión:
+{contexto_sesion}
+
+Memoria personal disponible:
+{memoria_contexto or "Sin recuerdos relevantes."}
 
 Mensaje del usuario:
 {texto_usuario}
-"""
+""".strip(),
     )
 
-    texto_respuesta = respuesta.output_text
-
-    return json.loads(texto_respuesta)
+    return _extraer_json(respuesta.output_text)

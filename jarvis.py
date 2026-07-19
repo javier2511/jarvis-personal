@@ -1,22 +1,17 @@
-
-from services.voice_service import VoiceService
-from services.ai_service import AIService
 from services.action_service import ActionService
-from services.memory_service import MemoryService
+from services.ai_service import AIService
+from services.voice_service import VoiceService
 
 
 class Jarvis:
-
     def __init__(self):
         self.nombre = "Jarvis"
-        self.version = "1.0"
+        self.version = "1.1"
         self.estado = "en_espera"
 
         self.voice = VoiceService()
         self.ai = AIService()
         self.actions = ActionService()
-        self.memory = MemoryService()
-        self.contexto = self.memory.obtener_contexto()
 
         print(f"{self.nombre} {self.version} inicializado.")
 
@@ -29,7 +24,7 @@ class Jarvis:
 
     def hablar(self, texto):
         self.cambiar_estado("hablando")
-        self.voice.hablar(texto)
+        self.voice.hablar(str(texto))
         self.cambiar_estado("en_espera")
 
     def interpretar(self, texto_usuario):
@@ -38,35 +33,17 @@ class Jarvis:
 
     def ejecutar(self, interpretacion):
         self.cambiar_estado("ejecutando")
-
-        resultado = self.actions.ejecutar(interpretacion)
-
-        self.memoria = self.memory.cargar_memoria()
-        self.contexto = self.memory.obtener_contexto()
-
-        return resultado
+        return self.actions.ejecutar(interpretacion)
 
     def procesar_comando(self, texto_usuario):
         try:
             interpretacion = self.interpretar(texto_usuario)
             resultado = self.ejecutar(interpretacion)
-
-            self.memory.guardar_evento(
-                usuario=texto_usuario,
-                interpretacion=interpretacion,
-                resultado=resultado
-            )
-
             self.cambiar_estado("en_espera")
             return resultado
 
         except Exception as error:
-            self.memory.guardar_evento(
-                usuario=texto_usuario,
-                interpretacion={},
-                resultado="error"
-            )
-
+            print(f"Error procesando comando: {error}")
             self.cambiar_estado("error")
             return f"Ocurrió un error: {error}"
 
@@ -74,7 +51,7 @@ class Jarvis:
         if not resultado:
             return None
 
-        texto = resultado.lower()
+        texto = str(resultado).lower()
 
         debe_iniciar_spotify = any(
             frase in texto
@@ -82,7 +59,7 @@ class Jarvis:
                 "ahora iniciaré spotify",
                 "ahora iniciare spotify",
                 "ahora abriré spotify",
-                "ahora abrire spotify"
+                "ahora abrire spotify",
             )
         )
 
@@ -90,50 +67,49 @@ class Jarvis:
             return None
 
         try:
-            return self.actions.ejecutar({
-                "modulo": "spotify",
-                "accion": "abrir",
-                "parametros": {}
-            })
-
-        except Exception as error:
-            print(
-                "No se pudo iniciar Spotify "
-                f"después de la rutina: {error}"
+            return self.actions.ejecutar(
+                {
+                    "modulo": "spotify",
+                    "accion": "abrir",
+                    "parametros": {},
+                }
             )
+        except Exception as error:
+            print(f"No se pudo iniciar Spotify después de la rutina: {error}")
             return None
+
     def ciclo_voz(self):
         texto_usuario = self.escuchar()
 
-        if texto_usuario == "":
-            self.hablar("No entendí")
+        if not texto_usuario:
+            respuesta = "No entendí."
+            self.hablar(respuesta)
             return {
-                "usuario": "No entendí",
-                "resultado": "No entendí",
-                "salir": False
+                "usuario": respuesta,
+                "resultado": respuesta,
+                "salir": False,
             }
 
-        texto_limpio = texto_usuario.lower().strip()
+        texto_limpio = str(texto_usuario).lower().strip()
 
         if "jarvis" in texto_limpio:
             texto_limpio = texto_limpio.replace("jarvis", "").strip()
 
         if texto_limpio == "salir":
-            self.hablar("Hasta luego, Javier.")
+            respuesta = "Hasta luego, Javier."
+            self.hablar(respuesta)
             return {
                 "usuario": texto_usuario,
-                "resultado": "Hasta luego, Javier.",
-                "salir": True
+                "resultado": respuesta,
+                "salir": True,
             }
 
         resultado = self.procesar_comando(texto_limpio)
-
         self.hablar(resultado)
-
         self.accion_despues_de_hablar(resultado)
 
         return {
             "usuario": texto_usuario,
             "resultado": resultado,
-            "salir": False
+            "salir": False,
         }
