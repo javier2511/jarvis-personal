@@ -12,6 +12,7 @@ load_dotenv()
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 MODEL = os.getenv("JARVIS_MODEL", "gpt-5.5")
+USER_NAME = os.getenv("JARVIS_USER_NAME", "Javier")
 
 if not API_KEY:
     raise RuntimeError("OPENAI_API_KEY no encontrada")
@@ -21,6 +22,9 @@ client = OpenAI(api_key=API_KEY)
 
 INSTRUCCIONES = """
 Eres el cerebro de Jarvis.
+
+El nombre del usuario es {USER_NAME}.
+Cuando redactes recuerdos, usa "{USER_NAME}" y nunca "el usuario".
 
 Convierte el mensaje del usuario en un único objeto JSON válido.
 No ejecutes acciones. No agregues markdown ni explicaciones.
@@ -34,6 +38,13 @@ Formato obligatorio:
 
 Usa el contexto de sesión y la memoria personal únicamente para interpretar
 referencias incompletas. Nunca inventes recuerdos.
+El nombre del usuario es Javier.
+Cuando redactes un recuerdo autosuficiente, utiliza "Javier" en lugar de
+"el usuario", "la persona" o expresiones impersonales.
+
+Ejemplo:
+Incorrecto: "El usuario le va a los Giants."
+Correcto: "Javier le va a los New York Giants."
 
 MÓDULOS Y ACCIONES
 
@@ -190,10 +201,13 @@ def interpretar_comando(texto_usuario, memoria_contexto=""):
 
     respuesta = client.responses.create(
         model=MODEL,
-        instructions=INSTRUCCIONES,
+        instructions=instrucciones,
         input=f"""
 Fecha actual:
 {fecha_actual}
+
+Nombre del usuario:
+{USER_NAME}
 
 Contexto de sesión:
 {contexto_sesion}

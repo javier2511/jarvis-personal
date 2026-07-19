@@ -29,6 +29,7 @@ from services.calendar_service import CalendarService
 from services.news_service import NewsService
 from services.traffic_service import TrafficService
 from services.weather_service import WeatherService
+from services.memory_service import MemoryService
 
 
 logger = logging.getLogger(__name__)
@@ -45,6 +46,7 @@ class RoutineService:
         self.traffic = TrafficService()
         self.news = NewsService()
         self.briefing = BriefingService()
+        self.memory = MemoryService()
 
         self.city = os.getenv(
             "JARVIS_CITY",
@@ -180,12 +182,14 @@ class RoutineService:
         clima = self._consultar_clima()
         trafico = self._consultar_trafico()
         noticias = self._consultar_noticias()
+        memoria = self.memory.contexto_para_briefing()
 
         datos: Dict[str, Any] = {
             "calendar": calendario,
             "weather": clima,
             "traffic": trafico,
             "news": noticias,
+            "memory": memoria
         }
 
         return {
