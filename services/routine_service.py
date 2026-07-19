@@ -22,7 +22,9 @@ from __future__ import annotations
 
 import logging
 import os
+from datetime import datetime
 from typing import Any, Dict, List
+from zoneinfo import ZoneInfo
 
 from services.briefing_service import BriefingService
 from services.calendar_service import CalendarService
@@ -33,6 +35,9 @@ from services.memory_service import MemoryService
 
 
 logger = logging.getLogger(__name__)
+
+
+MEXICO_TZ = ZoneInfo("America/Mexico_City")
 
 
 class RoutineService:
@@ -202,30 +207,42 @@ class RoutineService:
     # RUTINAS PÚBLICAS
     # ------------------------------------------------------------------
 
-    def buenos_dias(self) -> str:
+    def buenos_dias(self) -> Dict[str, Any]:
         """
-        Ejecuta la rutina de Buenos días.
+        Ejecuta la rutina de Buenos días y devuelve un resultado estructurado.
 
-        Hace una sola llamada a OpenAI a través de BriefingService.
-        Si OpenAI falla, BriefingService crea automáticamente un
-        resumen local de respaldo.
+        El texto se reproduce primero. Después, Jarvis ejecuta las acciones
+        incluidas en ``acciones`` sin depender de frases generadas por GPT.
         """
 
-        logger.info(
-            "Iniciando rutina de Buenos días."
-        )
+        logger.info("Iniciando rutina de Buenos días.")
 
+        momento_actual = datetime.now(MEXICO_TZ)
         datos = self._recolectar_datos()
 
         briefing = self.briefing.generar_briefing_seguro(
-            datos=datos
+            datos=datos,
+            momento=momento_actual,
         )
 
-        logger.info(
-            "Rutina de Buenos días finalizada."
-        )
+        resultado: Dict[str, Any] = {
+            "texto": briefing,
+            "acciones": [
+                {
+                    "modulo": "spotify",
+                    "accion": "abrir",
+                    "parametros": {},
+                }
+            ],
+            "metadata": {
+                "rutina": "buenos_dias",
+                "fecha_local": momento_actual.isoformat(),
+                "zona_horaria": str(MEXICO_TZ),
+            },
+        }
 
-        return briefing
+        logger.info("Rutina de Buenos días finalizada.")
+        return resultado
 
     # ------------------------------------------------------------------
     # UTILIDADES

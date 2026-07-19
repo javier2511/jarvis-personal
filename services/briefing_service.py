@@ -47,12 +47,16 @@ import json
 import logging
 import os
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
 from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
 
 
 logger = logging.getLogger(__name__)
+
+
+MEXICO_TZ = ZoneInfo("America/Mexico_City")
 
 
 class BriefingService:
@@ -128,7 +132,7 @@ class BriefingService:
                 "no está configurada."
             )
 
-        momento_actual = momento or datetime.now()
+        momento_actual = self._normalizar_momento(momento)
         datos_limpios = self._limpiar_valor(datos or {})
 
         contexto = self._construir_contexto(
@@ -166,7 +170,7 @@ class BriefingService:
         Este es el método que deberá usar RoutineService.
         """
 
-        momento_actual = momento or datetime.now()
+        momento_actual = self._normalizar_momento(momento)
         datos_recibidos = datos or {}
 
         try:
@@ -802,6 +806,22 @@ solo lo que realmente necesita saber.
     # ------------------------------------------------------------------
     # UTILIDADES
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _normalizar_momento(momento: Optional[datetime]) -> datetime:
+        """Devuelve siempre una fecha consciente en horario de Ciudad de México.
+
+        Si se recibe una fecha sin zona horaria, se interpreta como hora local de
+        México. Si ya tiene zona horaria, se convierte a America/Mexico_City.
+        """
+
+        if momento is None:
+            return datetime.now(MEXICO_TZ)
+
+        if momento.tzinfo is None:
+            return momento.replace(tzinfo=MEXICO_TZ)
+
+        return momento.astimezone(MEXICO_TZ)
 
     @staticmethod
     def _leer_entero_entorno(
