@@ -16,8 +16,6 @@ class Jarvis:
         self.ai = AIService()
         self.actions = ActionService()
         self.memory = MemoryService()
-
-        self.memoria = self.memory.cargar_memoria()
         self.contexto = self.memory.obtener_contexto()
 
         print(f"{self.nombre} {self.version} inicializado.")
