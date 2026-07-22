@@ -6,6 +6,7 @@ from services.memory_service import MemoryService
 from services.routine_service import RoutineService
 from services.spotify_service import SpotifyService
 from services.sports_service import SportsService
+from datetime import datetime, timedelta
 
 
 calendar = CalendarService()
@@ -27,11 +28,30 @@ def ejecutar_calendar(accion, parametros):
         inicio = parametros.get("inicio")
         fin = parametros.get("fin")
 
-        if not titulo or not inicio or not fin:
-            return "Necesito título, fecha de inicio y fecha de fin."
+        if not titulo:
+            return "Necesito saber el título del evento."
 
-        return calendar.crear_evento(titulo, inicio, fin)
+        if not inicio:
+            return "Necesito saber la fecha y hora del evento."
 
+        if not fin:
+            try:
+                inicio_dt = datetime.fromisoformat(
+                    str(inicio).replace("Z", "+00:00")
+                )
+                fin_dt = inicio_dt + timedelta(hours=1)
+                fin = fin_dt.isoformat()
+            except ValueError:
+                return (
+                    "Entendí el evento, pero no pude interpretar "
+                    "correctamente la fecha y la hora."
+                )
+
+        return calendar.crear_evento(
+            titulo,
+            inicio,
+            fin,
+        )
     if accion == "buscar_eventos":
         texto = parametros.get("texto", "").strip()
         if not texto:

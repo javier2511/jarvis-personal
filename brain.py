@@ -75,13 +75,37 @@ spotify:
 Parámetros de reproducir_busqueda:
 - busqueda
 
+
 calendar:
 - eventos_hoy
 - proximo_evento
+
 - crear_evento
+  Parámetros:
+  - titulo: nombre breve del evento
+  - inicio: fecha y hora de inicio en formato ISO 8601
+  - fin: fecha y hora de término en formato ISO 8601
+
+  Reglas:
+  - Interpreta fechas relativas usando la fecha actual proporcionada.
+  - Usa la zona horaria America/Mexico_City.
+  - Si el usuario indica una hora pero no una duración, asigna una duración de una hora.
+  - Si el usuario no indica hora, pide aclaración usando modulo none.
+  - No omitas inicio ni fin.
+
 - buscar_eventos
+  Parámetros:
+  - texto
+
 - mover_evento
+  Parámetros:
+  - texto
+  - nuevo_inicio: formato ISO 8601
+  - nuevo_fin: formato ISO 8601
+
 - eliminar_evento
+  Parámetros:
+  - texto
 
 routine:
 - buenos_dias
