@@ -1,5 +1,6 @@
 import json
 import os
+
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -72,8 +73,19 @@ spotify:
 - cancion_actual
 - reproducir_busqueda
 
+
+
 Parámetros de reproducir_busqueda:
 - busqueda
+
+maps:
+- abrir_ruta
+  Parámetros:
+  - destino
+
+- abrir_lugar
+  Parámetros:
+  - lugar
 
 
 calendar:
@@ -175,6 +187,33 @@ Usuario: cuándo juegan los Giants
   "accion": "proximo_evento",
   "parametros": {
     "equipo": "New York Giants"
+  }
+}
+
+Usuario: llévame al trabajo
+{
+  "modulo":"maps",
+  "accion":"abrir_ruta",
+  "parametros":{
+      "destino":"trabajo"
+  }
+}
+
+Usuario: llévame a Santa Fe
+{
+  "modulo":"maps",
+  "accion":"abrir_ruta",
+  "parametros":{
+      "destino":"Santa Fe"
+  }
+}
+
+Usuario: abre Costco Coacalco
+{
+  "modulo":"maps",
+  "accion":"abrir_lugar",
+  "parametros":{
+      "lugar":"Costco Coacalco"
   }
 }
 

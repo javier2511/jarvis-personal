@@ -7,6 +7,7 @@ from services.routine_service import RoutineService
 from services.spotify_service import SpotifyService
 from services.sports_service import SportsService
 from datetime import datetime, timedelta
+from services.maps_service import MapsService
 
 
 calendar = CalendarService()
@@ -14,6 +15,7 @@ memory = MemoryService()
 routine = RoutineService()
 spotify_api = SpotifyService()
 sports = SportsService()
+maps = MapsService()
 
 
 def ejecutar_calendar(accion, parametros):
@@ -204,6 +206,27 @@ def ejecutar_sports(accion, parametros):
 
     return f"No conozco la acción deportiva: {accion}"
 
+def ejecutar_maps(accion, parametros):
+
+    if accion == "abrir_ruta":
+
+        destino = parametros.get("destino", "").strip()
+
+        if not destino:
+            return "Necesito un destino."
+
+        return maps.abrir_ruta(destino)
+
+    if accion == "abrir_lugar":
+
+        lugar = parametros.get("lugar", "").strip()
+
+        if not lugar:
+            return "Necesito un lugar."
+
+        return maps.abrir_lugar(lugar)
+
+    return "Acción de Maps no reconocida."
 
 def ejecutar_none(accion, parametros):
     return "No encontré una acción disponible para ese comando."
@@ -225,6 +248,7 @@ def ejecutar_interpretacion(interpretacion):
         "routine": ejecutar_routine,
         "sports": ejecutar_sports,
         "none": ejecutar_none,
+        "maps": ejecutar_maps,
     }
 
     ejecutor = ejecutores.get(modulo)
