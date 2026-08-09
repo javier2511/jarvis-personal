@@ -231,6 +231,14 @@ async function processRecording() {
         }
 
         const data = await response.json();
+        alert(JSON.stringify(data, null, 2));
+        if (
+    Array.isArray(data.acciones) &&
+    data.acciones.length > 0
+) {
+    window.location.href = data.acciones[0].url;
+    return;
+}
         pendingActions = Array.isArray(data.acciones)
             ? data.acciones
             : [];
