@@ -20,6 +20,7 @@ let isRecording = false;
 let isProcessing = false;
 let responseAudio = null;
 let pendingActions = [];
+let pendingNavigationUrl = null;
 
 
 
@@ -231,14 +232,8 @@ async function processRecording() {
         }
 
         const data = await response.json();
-        alert(JSON.stringify(data, null, 2));
-        if (
-    Array.isArray(data.acciones) &&
-    data.acciones.length > 0
-) {
-    window.location.href = data.acciones[0].url;
-    return;
-}
+
+
         pendingActions = Array.isArray(data.acciones)
             ? data.acciones
             : [];
@@ -267,6 +262,15 @@ async function processRecording() {
                 "Comando completado";
         }
 
+        const accionURL = pendingActions.find(
+            accion =>
+                accion.tipo === "abrir_url" &&
+                accion.url
+        );
+
+        if (accionURL) {
+            pendingNavigationUrl = accionURL.url;
+        }
     } catch (error) {
         console.error(error);
 
@@ -329,16 +333,19 @@ async function playJarvisVoice(text) {
     jarvisAudio.muted = false;
     
     jarvisAudio.onended = async () => {
-        if (currentAudioUrl) {
-            URL.revokeObjectURL(currentAudioUrl);
-            currentAudioUrl = null;
-        }
 
-        setState("idle");
+    if (currentAudioUrl) {
+        URL.revokeObjectURL(currentAudioUrl);
+        currentAudioUrl = null;
+    }
 
-        await ejecutarAccionesCliente(pendingActions);
+    if (pendingNavigationUrl) {
+        statusText.textContent = "Toca el reactor para abrir la ruta";
+        jarvisState.textContent = "RUTA LISTA";
+        return;
+    }
 
-        pendingActions = [];
+    setState("idle");
     };
 
     jarvisAudio.onerror = () => {
@@ -375,6 +382,16 @@ async function playJarvisVoice(text) {
 reactorButton.addEventListener(
     "click",
     async () => {
+
+        if (pendingNavigationUrl) {
+
+            const url = pendingNavigationUrl;
+            pendingNavigationUrl = null;
+            pendingActions = [];
+
+            window.location.href = url;
+            return;
+        }
 
         await unlockAudio();
 
