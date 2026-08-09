@@ -527,7 +527,7 @@ async function processTextCommand() {
                     },
 
                     body: JSON.stringify({
-                         texto: comando
+                        texto: comando
                     })
                 }
             );
