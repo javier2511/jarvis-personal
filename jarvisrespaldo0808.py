@@ -88,39 +88,19 @@ class Jarvis:
         return str(texto), acciones
 
     def ejecutar_acciones_posteriores(self, acciones: List[Dict[str, Any]]):
-        """Procesa acciones posteriores al habla.
+        """Ejecuta de forma aislada las acciones posteriores al habla.
 
-        Las acciones de servidor (por ejemplo Spotify) se ejecutan mediante
-        ActionService. Las acciones que deben ocurrir en el dispositivo del
-        usuario (por ejemplo abrir una URL de Google Maps) se devuelven al
-        frontend para que Safari/Chrome las ejecute localmente.
+        Una acción que falle no impide que se intenten las siguientes.
         """
 
         resultados = []
 
         for accion in acciones:
             try:
-                tipo = str(accion.get("tipo", "")).strip().lower()
-
-                # Esta acción debe ejecutarse en el navegador del usuario,
-                # no en Railway. Se devuelve intacta a /accion-despues.
-                if tipo == "abrir_url":
-                    url = str(accion.get("url", "")).strip()
-
-                    if url:
-                        resultados.append({
-                            "tipo": "abrir_url",
-                            "url": url,
-                        })
-
-                    continue
-
-                # Las acciones normales siguen pasando por el router.
                 resultados.append(self.actions.ejecutar(accion))
-
             except Exception as error:
                 modulo = accion.get("modulo", "desconocido")
-                nombre_accion = accion.get("accion", accion.get("tipo", "desconocida"))
+                nombre_accion = accion.get("accion", "desconocida")
                 print(
                     "No se pudo ejecutar la acción posterior "
                     f"{modulo}.{nombre_accion}: {error}"
