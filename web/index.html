@@ -20,6 +20,7 @@
 
         <div class="background-grid"></div>
         <div class="background-glow"></div>
+        <div class="scan-line"></div>
 
         <header class="topbar">
             <div>
@@ -33,26 +34,51 @@
             </div>
         </header>
 
+        <section class="system-strip" aria-label="Estado del sistema">
+            <div class="system-chip">
+                <span class="chip-dot"></span>
+                <span>CORE</span>
+                <strong>READY</strong>
+            </div>
+            <div class="system-chip">
+                <span class="chip-dot"></span>
+                <span>VOICE</span>
+                <strong>ACTIVE</strong>
+            </div>
+            <div class="system-chip">
+                <span class="chip-dot"></span>
+                <span>MAPS</span>
+                <strong>LINKED</strong>
+            </div>
+        </section>
+
         <section class="reactor-section">
 
-            <button
-                id="reactorButton"
-                class="reactor"
-                type="button"
-                aria-label="Activar micrófono"
-            >
-                <span class="orbit orbit-one"></span>
-                <span class="orbit orbit-two"></span>
-                <span class="orbit orbit-three"></span>
+            <div class="reactor-frame">
+                <span class="hud-mark hud-mark-one"></span>
+                <span class="hud-mark hud-mark-two"></span>
+                <span class="hud-mark hud-mark-three"></span>
+                <span class="hud-mark hud-mark-four"></span>
 
-                <span class="particle particle-one"></span>
-                <span class="particle particle-two"></span>
-                <span class="particle particle-three"></span>
+                <button
+                    id="reactorButton"
+                    class="reactor"
+                    type="button"
+                    aria-label="Activar micrófono"
+                >
+                    <span class="orbit orbit-one"></span>
+                    <span class="orbit orbit-two"></span>
+                    <span class="orbit orbit-three"></span>
 
-                <span class="reactor-center">
-                    <span class="reactor-light"></span>
-                </span>
-            </button>
+                    <span class="particle particle-one"></span>
+                    <span class="particle particle-two"></span>
+                    <span class="particle particle-three"></span>
+
+                    <span class="reactor-center">
+                        <span class="reactor-light"></span>
+                    </span>
+                </button>
+            </div>
 
             <p id="status" class="status">Toca el reactor para hablar</p>
 
@@ -87,18 +113,60 @@
 
         </section>
 
+        <section class="command-console">
+            <div class="console-header">
+                <span>COMMAND TERMINAL</span>
+
+                <label class="silent-toggle">
+                    <input id="silentMode" type="checkbox">
+                    <span class="toggle-track">
+                        <span class="toggle-thumb"></span>
+                    </span>
+                    <span>SILENCIOSO</span>
+                </label>
+            </div>
+
+            <div class="command-row">
+                <span class="prompt-symbol">&gt;</span>
+
+                <input
+                    id="textCommand"
+                    type="text"
+                    autocomplete="off"
+                    enterkeyhint="send"
+                    placeholder="Escribe un comando..."
+                    aria-label="Escribe un comando para Jarvis"
+                >
+
+                <button
+                    id="sendCommand"
+                    class="send-command"
+                    type="button"
+                    aria-label="Enviar comando"
+                >
+                    <span>ENVIAR</span>
+                    <span class="send-arrow">↗</span>
+                </button>
+            </div>
+
+            <p class="console-hint">
+                ENTER PARA EJECUTAR · ACTIVA SILENCIOSO PARA RESPUESTAS SIN VOZ
+            </p>
+        </section>
+
         <footer class="footer">
             <span>JARVIS CORE</span>
-            <span>V2.0</span>
+            <span>V2.1 · DUAL INPUT</span>
         </footer>
 
     </main>
-<audio
-    id="jarvisAudio"
-    preload="auto"
-    playsinline
-></audio>
-    <script src="/web/script.js"></script>
 
+    <audio
+        id="jarvisAudio"
+        preload="auto"
+        playsinline
+    ></audio>
+
+    <script src="/web/script.js"></script>
 </body>
 </html>

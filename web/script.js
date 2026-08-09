@@ -10,6 +10,15 @@ const jarvisState = document.getElementById("jarvisState");
 const jarvisAudio =
     document.getElementById("jarvisAudio");
 
+const textCommand =
+    document.getElementById("textCommand");
+
+const sendCommand =
+    document.getElementById("sendCommand");
+
+const silentMode =
+    document.getElementById("silentMode");
+
 
 let currentAudioUrl = null;
 let audioUnlocked = false;
@@ -149,8 +158,8 @@ async function startRecording() {
         }
 
         /*
-            Cada nuevo comando limpia cualquier navegación
-            anterior.
+            Cada nuevo comando limpia cualquier
+            navegación anterior.
         */
         pendingActions = [];
         pendingNavigationUrl = null;
@@ -207,7 +216,7 @@ async function startRecording() {
             "No se pudo acceder al micrófono.";
 
         jarvisText.textContent =
-            "Revisa el permiso del micrófono en Safari y vuelve a intentarlo.";
+            "Revisa el permiso del micrófono y vuelve a intentarlo.";
 
         setState("idle");
     }
@@ -250,7 +259,7 @@ function stopMediaStream() {
 
 
 /* =========================================================
-   DESBLOQUEAR AUDIO EN SAFARI
+   DESBLOQUEAR AUDIO
 ========================================================= */
 
 async function unlockAudio() {
@@ -277,7 +286,7 @@ async function unlockAudio() {
     } catch (error) {
 
         console.warn(
-            "Safari no permitió desbloquear audio:",
+            "El navegador no permitió desbloquear audio:",
             error
         );
     }
@@ -285,7 +294,43 @@ async function unlockAudio() {
 
 
 /* =========================================================
-   PROCESAR COMANDO
+   PREPARAR ACCIONES
+========================================================= */
+
+function prepareActions(actions) {
+
+    pendingActions =
+        Array.isArray(actions)
+            ? actions
+            : [];
+
+    const accionURL =
+        pendingActions.find(
+            accion =>
+                accion &&
+                accion.tipo === "abrir_url" &&
+                accion.url
+        );
+
+    pendingNavigationUrl =
+        accionURL
+            ? accionURL.url
+            : null;
+
+    console.log(
+        "Acciones recibidas:",
+        pendingActions
+    );
+
+    console.log(
+        "URL pendiente:",
+        pendingNavigationUrl
+    );
+}
+
+
+/* =========================================================
+   PROCESAR COMANDO DE VOZ
 ========================================================= */
 
 async function processRecording() {
@@ -309,6 +354,7 @@ async function processRecording() {
             );
 
         if (audioBlob.size === 0) {
+
             throw new Error(
                 "El audio está vacío."
             );
@@ -344,55 +390,10 @@ async function processRecording() {
 
 
         /*
-            Guardamos las acciones ANTES de reproducir
-            la respuesta de Jarvis.
+            Preparamos Maps y demás acciones ANTES
+            de reproducir la voz.
         */
-
-        pendingActions =
-            Array.isArray(data.acciones)
-                ? data.acciones
-                : [];
-
-
-        /*
-            Buscamos si Jarvis quiere abrir una URL.
-            Maps utiliza esta acción.
-        */
-
-        const accionURL =
-            pendingActions.find(
-                accion =>
-                    accion &&
-                    accion.tipo === "abrir_url" &&
-                    accion.url
-            );
-
-
-        /*
-            IMPORTANTE:
-
-            Esta variable debe quedar preparada ANTES
-            de que Jarvis empiece a hablar.
-
-            Así, cuando termine el audio, ya sabemos
-            que existe una ruta pendiente.
-        */
-
-        pendingNavigationUrl =
-            accionURL
-                ? accionURL.url
-                : null;
-
-
-        console.log(
-            "Acciones recibidas:",
-            pendingActions
-        );
-
-        console.log(
-            "URL pendiente:",
-            pendingNavigationUrl
-        );
+        prepareActions(data.acciones);
 
 
         userText.textContent =
@@ -405,8 +406,18 @@ async function processRecording() {
 
 
         /*
-            Jarvis responde por voz.
+            Si activaste modo silencioso también aplica
+            aunque hayas usado el micrófono.
         */
+        if (
+            silentMode &&
+            silentMode.checked
+        ) {
+
+            showSilentResult();
+            return;
+        }
+
 
         try {
 
@@ -421,27 +432,7 @@ async function processRecording() {
                 voiceError
             );
 
-            jarvisState.textContent =
-                "RESPUESTA SIN AUDIO";
-
-            /*
-                Aunque falle la voz, si tenemos una
-                navegación pendiente permitimos abrirla.
-            */
-
-            if (pendingNavigationUrl) {
-
-                statusText.textContent =
-                    "Ruta lista · Toca el reactor para abrir Maps";
-
-                jarvisState.textContent =
-                    "RUTA LISTA";
-
-            } else {
-
-                statusText.textContent =
-                    "Comando completado";
-            }
+            showResultWithoutVoice();
         }
 
     } catch (error) {
@@ -449,7 +440,7 @@ async function processRecording() {
         console.error(error);
 
         jarvisText.textContent =
-            "Ocurrió un problema procesando el audio. Revisa la terminal de Jarvis.";
+            "Ocurrió un problema procesando el audio.";
 
         pendingActions = [];
         pendingNavigationUrl = null;
@@ -465,17 +456,250 @@ async function processRecording() {
 
 
 /* =========================================================
+   COMANDOS ESCRITOS
+========================================================= */
+
+async function processTextCommand() {
+
+    if (!textCommand) {
+        return;
+    }
+
+    const comando =
+        textCommand.value.trim();
+
+    if (!comando || isProcessing) {
+        return;
+    }
+
+
+    /*
+        Evitamos que quede una ruta anterior pendiente.
+    */
+    pendingActions = [];
+    pendingNavigationUrl = null;
+
+    isProcessing = true;
+
+
+    userText.textContent =
+        comando;
+
+    jarvisText.textContent =
+        "Procesando comando...";
+
+    userState.textContent =
+        "ENVIADO";
+
+    jarvisState.textContent =
+        "PROCESANDO";
+
+    statusText.textContent =
+        "Analizando comando...";
+
+    reactorButton.classList.remove(
+        "is-listening",
+        "is-speaking"
+    );
+
+    reactorButton.classList.add(
+        "is-thinking"
+    );
+
+
+    /*
+        Limpiamos la caja después de mandar.
+    */
+    textCommand.value = "";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/comando",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        comando: comando
+                    })
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Error del servidor: ${response.status}`
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        /*
+            Misma lógica que los comandos de voz.
+        */
+        prepareActions(
+            data.acciones
+        );
+
+
+        userText.textContent =
+            data.usuario ||
+            comando;
+
+
+        jarvisText.textContent =
+            data.resultado ||
+            "No pude generar una respuesta.";
+
+
+        userState.textContent =
+            "COMPLETADO";
+
+
+        /*
+            MODO OFICINA
+
+            Jarvis responde únicamente en pantalla.
+        */
+        if (
+            silentMode &&
+            silentMode.checked
+        ) {
+
+            showSilentResult();
+            return;
+        }
+
+
+        /*
+            Si silencioso está apagado,
+            Jarvis también responde hablando.
+        */
+        try {
+
+            await unlockAudio();
+
+            await playJarvisVoice(
+                data.resultado
+            );
+
+        } catch (voiceError) {
+
+            console.error(
+                "El comando escrito funcionó, pero falló la voz:",
+                voiceError
+            );
+
+            showResultWithoutVoice();
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        jarvisText.textContent =
+            "Ocurrió un problema procesando el comando escrito.";
+
+        pendingActions = [];
+        pendingNavigationUrl = null;
+
+        setState("idle");
+
+    } finally {
+
+        isProcessing = false;
+    }
+}
+
+
+/* =========================================================
+   RESULTADO SILENCIOSO
+========================================================= */
+
+function showSilentResult() {
+
+    reactorButton.classList.remove(
+        "is-listening",
+        "is-thinking",
+        "is-speaking"
+    );
+
+    userState.textContent =
+        "COMPLETADO";
+
+
+    if (pendingNavigationUrl) {
+
+        statusText.textContent =
+            "Ruta lista · Toca el reactor para abrir Maps";
+
+        jarvisState.textContent =
+            "RUTA LISTA";
+
+        return;
+    }
+
+
+    statusText.textContent =
+        "Respuesta lista · Modo silencioso";
+
+    jarvisState.textContent =
+        "LISTO";
+}
+
+
+/* =========================================================
+   RESULTADO SIN AUDIO
+========================================================= */
+
+function showResultWithoutVoice() {
+
+    reactorButton.classList.remove(
+        "is-listening",
+        "is-thinking",
+        "is-speaking"
+    );
+
+
+    if (pendingNavigationUrl) {
+
+        statusText.textContent =
+            "Ruta lista · Toca el reactor para abrir Maps";
+
+        jarvisState.textContent =
+            "RUTA LISTA";
+
+        return;
+    }
+
+
+    statusText.textContent =
+        "Respuesta lista";
+
+    jarvisState.textContent =
+        "RESPUESTA SIN AUDIO";
+}
+
+
+/* =========================================================
    VOZ DE JARVIS
 ========================================================= */
 
 async function playJarvisVoice(text) {
 
     if (!text) {
-
-        /*
-            Incluso sin texto, Maps podría tener
-            una navegación pendiente.
-        */
 
         if (pendingNavigationUrl) {
 
@@ -563,9 +787,8 @@ async function playJarvisVoice(text) {
 
 
     /*
-        CUANDO JARVIS TERMINA DE HABLAR
+        Cuando Jarvis termina de hablar.
     */
-
     jarvisAudio.onended = () => {
 
         if (currentAudioUrl) {
@@ -579,13 +802,9 @@ async function playJarvisVoice(text) {
 
 
         /*
-            Si tenemos una URL pendiente NO regresamos
-            al estado normal.
-
-            Mostramos claramente que el siguiente toque
-            abrirá Maps.
+            Conservamos exactamente la lógica que
+            hizo funcionar Maps en iPhone.
         */
-
         if (pendingNavigationUrl) {
 
             reactorButton.classList.remove(
@@ -607,10 +826,6 @@ async function playJarvisVoice(text) {
         }
 
 
-        /*
-            Comando normal.
-        */
-
         setState("idle");
     };
 
@@ -618,15 +833,10 @@ async function playJarvisVoice(text) {
     jarvisAudio.onerror = () => {
 
         console.error(
-            "Safari no pudo reproducir el audio.",
+            "No se pudo reproducir el audio.",
             jarvisAudio.error
         );
 
-
-        /*
-            Si Maps está pendiente, mantenemos disponible
-            la navegación incluso si falló el audio.
-        */
 
         if (pendingNavigationUrl) {
 
@@ -689,6 +899,68 @@ async function playJarvisVoice(text) {
 
 
 /* =========================================================
+   BOTÓN ENVIAR
+========================================================= */
+
+if (sendCommand) {
+
+    sendCommand.addEventListener(
+        "click",
+        () => {
+            processTextCommand();
+        }
+    );
+}
+
+
+/* =========================================================
+   ENTER PARA ENVIAR
+========================================================= */
+
+if (textCommand) {
+
+    textCommand.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                processTextCommand();
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   MODO SILENCIOSO
+========================================================= */
+
+if (silentMode) {
+
+    silentMode.addEventListener(
+        "change",
+        () => {
+
+            if (silentMode.checked) {
+
+                statusText.textContent =
+                    "Modo silencioso activo · Puedes escribir a Jarvis";
+
+                return;
+            }
+
+
+            statusText.textContent =
+                "Modo voz activo · Toca el reactor para hablar";
+        }
+    );
+}
+
+
+/* =========================================================
    BOTÓN / REACTOR
 ========================================================= */
 
@@ -697,38 +969,28 @@ reactorButton.addEventListener(
     async () => {
 
         /*
-            PRIORIDAD #1:
+            PRIORIDAD #1
 
-            Si existe una navegación pendiente,
-            este toque abre Maps.
+            Si existe una ruta pendiente,
+            el reactor abre Maps.
 
-            Esto es importante para iPhone porque Safari
-            requiere una interacción directa del usuario.
+            Esto conserva el arreglo necesario
+            para Safari/iPhone.
         */
-
         if (pendingNavigationUrl) {
 
             const url =
                 pendingNavigationUrl;
 
 
-            /*
-                Limpiamos primero para evitar que al volver
-                de Maps el reactor intente abrir otra vez
-                la misma dirección.
-            */
-
             pendingNavigationUrl = null;
             pendingActions = [];
 
 
             /*
-                Este cambio de página ocurre directamente
-                dentro del evento click.
-
-                Por eso Safari/iOS debe permitirlo.
+                Navegación directamente desde el click
+                del usuario.
             */
-
             window.location.href = url;
 
             return;
@@ -736,9 +998,8 @@ reactorButton.addEventListener(
 
 
         /*
-            Funcionamiento normal del reactor.
+            Funcionamiento normal de voz.
         */
-
         await unlockAudio();
 
 
