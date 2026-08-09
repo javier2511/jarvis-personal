@@ -19,6 +19,7 @@ let audioChunks = [];
 let isRecording = false;
 let isProcessing = false;
 let responseAudio = null;
+let pendingActions = [];
 
 
 
@@ -230,6 +231,9 @@ async function processRecording() {
         }
 
         const data = await response.json();
+        pendingActions = Array.isArray(data.acciones)
+            ? data.acciones
+            : [];
 
         userText.textContent =
             data.usuario || "No pude transcribir el audio.";
@@ -315,16 +319,18 @@ async function playJarvisVoice(text) {
     jarvisAudio.load();
     jarvisAudio.volume = 1;
     jarvisAudio.muted = false;
-
+    
     jarvisAudio.onended = async () => {
-    if (currentAudioUrl) {
-        URL.revokeObjectURL(currentAudioUrl);
-        currentAudioUrl = null;
-    }
+        if (currentAudioUrl) {
+            URL.revokeObjectURL(currentAudioUrl);
+            currentAudioUrl = null;
+        }
 
-    setState("idle");
+        setState("idle");
 
-    await ejecutarAccionDespues(text);
+        await ejecutarAccionesCliente(pendingActions);
+
+        pendingActions = [];
     };
 
     jarvisAudio.onerror = () => {
@@ -422,4 +428,28 @@ async function ejecutarAccionDespues(resultado) {
 
     }
 
+}
+async function ejecutarAccionesCliente(acciones) {
+
+    if (!Array.isArray(acciones)) {
+        return;
+    }
+
+    for (const accion of acciones) {
+
+        if (
+            accion.tipo === "abrir_url" &&
+            accion.url
+        ) {
+
+            console.log(
+                "Abriendo URL:",
+                accion.url
+            );
+
+            window.location.assign(
+                accion.url
+            );
+        }
+    }
 }
