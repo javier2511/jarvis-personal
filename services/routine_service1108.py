@@ -10,7 +10,6 @@ Este servicio consulta:
 - Clima
 - Tráfico
 - Noticias
-- WHOOP
 
 Después entrega toda la información al BriefingService para generar
 un único resumen natural mediante OpenAI.
@@ -32,7 +31,6 @@ from services.calendar_service import CalendarService
 from services.news_service import NewsService
 from services.traffic_service import TrafficService
 from services.weather_service import WeatherService
-from services.whoop_service import WhoopService
 from services.memory_service import MemoryService
 
 
@@ -54,7 +52,6 @@ class RoutineService:
         self.news = NewsService()
         self.briefing = BriefingService()
         self.memory = MemoryService()
-        self.whoop = WhoopService()
 
         self.city = os.getenv(
             "JARVIS_CITY",
@@ -169,25 +166,6 @@ class RoutineService:
 
             return []
 
-    def _consultar_whoop(self) -> Any:
-        """
-        Consulta el resumen actual de WHOOP.
-
-        Si WHOOP falla o no tiene datos disponibles, la rutina continúa
-        normalmente con el resto de los servicios.
-        """
-
-        try:
-            return self.whoop.resumen_hoy()
-
-        except Exception as error:
-            logger.exception(
-                "Error consultando WHOOP: %s",
-                error,
-            )
-
-            return None
-
     # ------------------------------------------------------------------
     # CONSTRUCCIÓN DE DATOS
     # ------------------------------------------------------------------
@@ -198,6 +176,7 @@ class RoutineService:
 
         Las claves pueden crecer después con:
 
+        - whoop
         - sports
         - gmail
         - work
@@ -209,15 +188,13 @@ class RoutineService:
         trafico = self._consultar_trafico()
         noticias = self._consultar_noticias()
         memoria = self.memory.contexto_para_briefing()
-        whoop = self._consultar_whoop()
 
         datos: Dict[str, Any] = {
             "calendar": calendario,
             "weather": clima,
             "traffic": trafico,
             "news": noticias,
-            "memory": memoria,
-            "whoop": whoop,
+            "memory": memoria
         }
 
         return {

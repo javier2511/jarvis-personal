@@ -247,7 +247,7 @@ PRIORIDADES
 
 1. Eventos próximos, compromisos importantes o cambios de agenda.
 2. Alertas relevantes: lluvia, tormentas, tráfico fuerte o problemas.
-3. Memoria personal: recuerdos que tienes del usuario
+3.Memoria personal: recuerdos que tienes del usuario
 4. Salud y recuperación, cuando haya datos de WHOOP.
 5. Noticias realmente importantes.
 6. Deportes relevantes para los intereses del usuario.
