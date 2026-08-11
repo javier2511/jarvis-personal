@@ -361,10 +361,7 @@ class WhoopService:
         if not records:
             return None
 
-        /*
-            Evitamos devolver una siesta como
-            sueño principal.
-        */
+       
 
         for sleep in records:
 
