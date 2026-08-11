@@ -8,7 +8,6 @@ from services.spotify_service import SpotifyService
 from services.sports_service import SportsService
 from datetime import datetime, timedelta
 from services.maps_service import MapsService
-from services.whoop_service import WhoopService
 
 
 calendar = CalendarService()
@@ -17,7 +16,6 @@ routine = RoutineService()
 spotify_api = SpotifyService()
 sports = SportsService()
 maps = MapsService()
-whoop = WhoopService()
 
 
 def ejecutar_calendar(accion, parametros):
@@ -230,119 +228,6 @@ def ejecutar_maps(accion, parametros):
 
     return "Acción de Maps no reconocida."
 
-def _formatear_horas(horas):
-    if horas is None:
-        return None
-
-    total_minutos = int(round(float(horas) * 60))
-    horas_enteras = total_minutos // 60
-    minutos = total_minutos % 60
-
-    if horas_enteras and minutos:
-        return f"{horas_enteras} horas {minutos} minutos"
-
-    if horas_enteras:
-        return f"{horas_enteras} horas"
-
-    return f"{minutos} minutos"
-
-
-def ejecutar_whoop(accion, parametros):
-    datos = whoop.resumen_hoy()
-
-    recovery = datos.get("recovery")
-    hrv = datos.get("hrv")
-    rhr = datos.get("resting_heart_rate")
-    strain = datos.get("strain")
-    sleep_hours = datos.get("sleep_hours")
-    sleep_performance = datos.get("sleep_performance")
-    sleep_efficiency = datos.get("sleep_efficiency")
-    sleep_consistency = datos.get("sleep_consistency")
-
-    if accion == "resumen_hoy":
-        partes = []
-
-        if recovery is not None:
-            partes.append(f"Tu recovery de hoy es {round(float(recovery))} por ciento")
-
-        if sleep_hours is not None:
-            partes.append(f"dormiste {_formatear_horas(sleep_hours)}")
-
-        if sleep_performance is not None:
-            partes.append(
-                f"con un rendimiento de sueño de {round(float(sleep_performance))} por ciento"
-            )
-
-        if hrv is not None:
-            partes.append(f"tu HRV fue de {round(float(hrv), 1)} milisegundos")
-
-        if rhr is not None:
-            partes.append(
-                f"y tu frecuencia cardiaca en reposo fue de {round(float(rhr))} latidos por minuto"
-            )
-
-        if strain is not None:
-            partes.append(f"Tu strain actual es {round(float(strain), 1)}")
-
-        if not partes:
-            return "WHOOP está conectado, pero todavía no tengo métricas disponibles para hoy."
-
-        return ". ".join(partes) + "."
-
-    if accion == "recovery":
-        if recovery is None:
-            return "WHOOP todavía no tiene un recovery disponible para hoy."
-        return f"Tu recovery de hoy es {round(float(recovery))} por ciento."
-
-    if accion == "sueno":
-        if sleep_hours is None:
-            return "WHOOP todavía no tiene un registro de sueño disponible."
-
-        respuesta = f"Dormiste {_formatear_horas(sleep_hours)}"
-
-        if sleep_performance is not None:
-            respuesta += (
-                f", con un rendimiento de sueño de "
-                f"{round(float(sleep_performance))} por ciento"
-            )
-
-        if sleep_efficiency is not None:
-            respuesta += (
-                f" y una eficiencia de "
-                f"{round(float(sleep_efficiency), 1)} por ciento"
-            )
-
-        if sleep_consistency is not None:
-            respuesta += (
-                f". Tu consistencia fue de "
-                f"{round(float(sleep_consistency))} por ciento"
-            )
-
-        return respuesta + "."
-
-    if accion == "hrv":
-        if hrv is None:
-            return "WHOOP todavía no tiene un HRV disponible para hoy."
-        return f"Tu HRV de hoy fue de {round(float(hrv), 1)} milisegundos."
-
-    if accion == "rhr":
-        if rhr is None:
-            return (
-                "WHOOP todavía no tiene una frecuencia cardiaca "
-                "en reposo disponible para hoy."
-            )
-        return (
-            f"Tu frecuencia cardiaca en reposo fue de "
-            f"{round(float(rhr))} latidos por minuto."
-        )
-
-    if accion == "strain":
-        if strain is None:
-            return "WHOOP todavía no tiene strain disponible para hoy."
-        return f"Tu strain actual es {round(float(strain), 1)}."
-
-    return f"No conozco la acción de WHOOP: {accion}"
-
 def ejecutar_none(accion, parametros):
     return "No encontré una acción disponible para ese comando."
 
@@ -364,7 +249,6 @@ def ejecutar_interpretacion(interpretacion):
         "sports": ejecutar_sports,
         "none": ejecutar_none,
         "maps": ejecutar_maps,
-        "whoop": ejecutar_whoop,
     }
 
     ejecutor = ejecutores.get(modulo)

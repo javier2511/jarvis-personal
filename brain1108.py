@@ -88,22 +88,6 @@ maps:
   - lugar
 
 
-whoop:
-- resumen_hoy
-- recovery
-- sueno
-- hrv
-- rhr
-- strain
-
-Reglas:
-- Usa resumen_hoy cuando el usuario pregunte algo general como "cómo amanecí", "cómo estoy hoy" o "cómo dormí en general".
-- Usa recovery cuando pregunte específicamente por recovery, recuperación o readiness.
-- Usa sueno cuando pregunte cuánto durmió, cómo durmió o por sleep performance.
-- Usa hrv cuando pregunte por HRV o variabilidad de la frecuencia cardiaca.
-- Usa rhr cuando pregunte por frecuencia cardiaca en reposo o resting heart rate.
-- Usa strain cuando pregunte por strain, carga o esfuerzo acumulado del día.
-
 calendar:
 - eventos_hoy
 - proximo_evento
@@ -233,47 +217,6 @@ Usuario: abre Costco Coacalco
   }
 }
 
-Usuario: cómo amanecí
-{
-  "modulo":"whoop",
-  "accion":"resumen_hoy",
-  "parametros":{}
-}
-
-Usuario: cuál es mi recovery
-{
-  "modulo":"whoop",
-  "accion":"recovery",
-  "parametros":{}
-}
-
-Usuario: cuánto dormí
-{
-  "modulo":"whoop",
-  "accion":"sueno",
-  "parametros":{}
-}
-
-Usuario: cómo está mi HRV
-{
-  "modulo":"whoop",
-  "accion":"hrv",
-  "parametros":{}
-}
-
-Usuario: cuál fue mi frecuencia cardiaca en reposo
-{
-  "modulo":"whoop",
-  "accion":"rhr",
-  "parametros":{}
-}
-
-Usuario: cuánto strain llevo
-{
-  "modulo":"whoop",
-  "accion":"strain",
-  "parametros":{}
-}
 Cuando no corresponda ninguna acción:
 {
   "modulo": "none",
