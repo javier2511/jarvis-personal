@@ -9,7 +9,6 @@ from services.sports_service import SportsService
 from datetime import datetime, timedelta
 from services.maps_service import MapsService
 from services.whoop_service import WhoopService
-from services.gmail_service import GmailService
 
 
 calendar = CalendarService()
@@ -19,7 +18,6 @@ spotify_api = SpotifyService()
 sports = SportsService()
 maps = MapsService()
 whoop = WhoopService()
-gmail = GmailService()
 
 
 def ejecutar_calendar(accion, parametros):
@@ -356,44 +354,6 @@ def ejecutar_whoop(accion, parametros):
 
     return f"No conozco la acción de WHOOP: {accion}"
 
-def ejecutar_gmail(accion, parametros):
-    if accion == "correos_hoy":
-        return gmail.correos_hoy()
-
-    if accion == "importantes":
-        return gmail.importantes()
-
-    if accion == "ultimos":
-        return gmail.ultimos()
-
-    if accion == "buscar":
-        consulta = parametros.get(
-            "consulta",
-            "",
-        ).strip()
-
-        if not consulta:
-            return "Necesito saber qué correo quieres buscar."
-
-        return gmail.buscar(
-            consulta
-        )
-
-    if accion == "de_remitente":
-        remitente = parametros.get(
-            "remitente",
-            "",
-        ).strip()
-
-        if not remitente:
-            return "Necesito saber de quién quieres buscar correos."
-
-        return gmail.de_remitente(
-            remitente
-        )
-
-    return f"No conozco la acción de Gmail: {accion}"
-
 def ejecutar_none(accion, parametros):
     return "No encontré una acción disponible para ese comando."
 
@@ -416,7 +376,6 @@ def ejecutar_interpretacion(interpretacion):
         "none": ejecutar_none,
         "maps": ejecutar_maps,
         "whoop": ejecutar_whoop,
-        "gmail": ejecutar_gmail,
     }
 
     ejecutor = ejecutores.get(modulo)

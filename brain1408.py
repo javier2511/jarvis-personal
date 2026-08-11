@@ -146,25 +146,6 @@ calendar:
   Parámetros:
   - texto
 
-gmail:
-- correos_hoy
-- importantes
-- ultimos
-- buscar
-  Parámetros:
-  - consulta
-- de_remitente
-  Parámetros:
-  - remitente
-
-Reglas de Gmail:
-- Usa correos_hoy cuando pregunte qué llegó hoy o por correos de hoy.
-- Usa importantes cuando pregunte por correos importantes, urgentes, pendientes o que convenga revisar.
-- Usa ultimos cuando pida sus últimos correos o un resumen reciente.
-- Usa de_remitente cuando pregunte qué le mandó una persona o empresa concreta.
-- Usa buscar para búsquedas generales por asunto, palabra o criterio.
-- Por ahora Gmail es solo lectura. No interpretes órdenes de enviar, responder, eliminar o archivar como acciones disponibles.
-
 routine:
 - buenos_dias
 
@@ -354,44 +335,6 @@ Usuario: cuánto strain llevo
   "modulo":"whoop",
   "accion":"strain",
   "parametros":{}
-}
-Usuario: qué correos importantes tengo
-{
-  "modulo": "gmail",
-  "accion": "importantes",
-  "parametros": {}
-}
-
-Usuario: qué me llegó hoy
-{
-  "modulo": "gmail",
-  "accion": "correos_hoy",
-  "parametros": {}
-}
-
-Usuario: resume mis últimos correos
-{
-  "modulo": "gmail",
-  "accion": "ultimos",
-  "parametros": {}
-}
-
-Usuario: qué me mandó Andrés
-{
-  "modulo": "gmail",
-  "accion": "de_remitente",
-  "parametros": {
-    "remitente": "Andrés"
-  }
-}
-
-Usuario: busca correos sobre presupuesto
-{
-  "modulo": "gmail",
-  "accion": "buscar",
-  "parametros": {
-    "consulta": "presupuesto"
-  }
 }
 Cuando no corresponda ninguna acción:
 {
