@@ -99,98 +99,13 @@ class SpotifyService:
         spotify = self.cliente()
         return spotify.current_playback()
 
-    @staticmethod
-    def _normalizar_dispositivo(texto):
-        return (texto or "").strip().lower()
-
-    def _coincide_dispositivo(self, dispositivo, preferencia):
-        preferencia = self._normalizar_dispositivo(preferencia)
-
-        if not preferencia:
-            return False
-
-        nombre = self._normalizar_dispositivo(
-            dispositivo.get("name")
-        )
-
-        tipo = self._normalizar_dispositivo(
-            dispositivo.get("type")
-        )
-
-        if preferencia in nombre:
-            return True
-
-        aliases = {
-            "iphone": ("iphone", "smartphone"),
-            "celular": ("iphone", "phone", "smartphone", "mobile"),
-            "telefono": ("iphone", "phone", "smartphone", "mobile"),
-            "teléfono": ("iphone", "phone", "smartphone", "mobile"),
-            "pc": ("computer", "desktop", "windows", "pc"),
-            "computadora": ("computer", "desktop", "windows", "pc"),
-            "laptop": ("computer", "laptop"),
-            "alexa": ("alexa", "echo", "speaker"),
-            "bocina": ("speaker", "alexa", "echo"),
-        }
-
-        candidatos = aliases.get(preferencia)
-
-        if candidatos:
-            return any(
-                candidato in nombre or candidato in tipo
-                for candidato in candidatos
-            )
-
-        return preferencia in tipo
-
-    def buscar_dispositivo(self, preferencia=None):
+    def dispositivo_activo(self):
         dispositivos = self.dispositivos()
 
         if not dispositivos:
             raise RuntimeError(
                 "No encontré dispositivos de Spotify. "
-                "Abre Spotify en el dispositivo que quieras usar "
-                "y vuelve a intentarlo."
-            )
-
-        if preferencia:
-            coincidencias = [
-                dispositivo
-                for dispositivo in dispositivos
-                if self._coincide_dispositivo(
-                    dispositivo,
-                    preferencia,
-                )
-            ]
-
-            if coincidencias:
-                activos = [
-                    dispositivo
-                    for dispositivo in coincidencias
-                    if dispositivo.get("is_active")
-                ]
-
-                elegidos = activos or coincidencias
-
-                controlables = [
-                    dispositivo
-                    for dispositivo in elegidos
-                    if not dispositivo.get("is_restricted")
-                ]
-
-                return (
-                    controlables[0]
-                    if controlables
-                    else elegidos[0]
-                )
-
-            nombres = ", ".join(
-                dispositivo.get("name", "Sin nombre")
-                for dispositivo in dispositivos
-            )
-
-            raise RuntimeError(
-                f"No encontré un dispositivo de Spotify que coincida "
-                f"con '{preferencia}'. Disponibles: {nombres}."
+                "Abre Spotify en tu iPhone, Alexa o PC y vuelve a intentarlo."
             )
 
         activos = [
@@ -202,6 +117,8 @@ class SpotifyService:
         if activos:
             return activos[0]
 
+        # Si Spotify recuerda un dispositivo restringido, evitamos elegirlo
+        # cuando existe otra opción controlable.
         controlables = [
             dispositivo
             for dispositivo in dispositivos
@@ -213,10 +130,8 @@ class SpotifyService:
 
         return dispositivos[0]
 
-    def _asegurar_dispositivo(self, preferencia=None):
-        dispositivo = self.buscar_dispositivo(
-            preferencia
-        )
+    def _asegurar_dispositivo(self):
+        dispositivo = self.dispositivo_activo()
 
         if dispositivo.get("is_restricted"):
             raise RuntimeError(
@@ -226,19 +141,17 @@ class SpotifyService:
 
         return dispositivo
 
-    def reproducir(self, dispositivo=None):
+    def reproducir(self):
         spotify = self.cliente()
-        destino = self._asegurar_dispositivo(
-            dispositivo
-        )
+        dispositivo = self._asegurar_dispositivo()
 
         spotify.start_playback(
-            device_id=destino["id"]
+            device_id=dispositivo["id"]
         )
 
         return (
             f"Reanudando Spotify en "
-            f"{destino['name']}."
+            f"{dispositivo['name']}."
         )
 
     def _buscar_playlist_usuario(self, spotify, busqueda):
@@ -287,9 +200,9 @@ class SpotifyService:
 
         return None
 
-    def reproducir_busqueda(self, busqueda, dispositivo=None):
+    def reproducir_busqueda(self, busqueda):
         spotify = self.cliente()
-        dispositivo = self._asegurar_dispositivo(dispositivo)
+        dispositivo = self._asegurar_dispositivo()
         busqueda = (busqueda or "").strip()
 
         if not busqueda:

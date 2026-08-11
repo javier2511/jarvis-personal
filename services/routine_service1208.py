@@ -254,9 +254,7 @@ class RoutineService:
                 {
                     "modulo": "spotify",
                     "accion": "abrir",
-                    "parametros": {
-                        "dispositivo": "iPhone",
-                    },
+                    "parametros": {},
                 }
             ],
             "metadata": {

@@ -68,26 +68,15 @@ memory:
 spotify:
 - abrir
 - pausa
-- reanudar
 - siguiente
 - anterior
 - cancion_actual
 - reproducir_busqueda
 
+
+
 Parámetros de reproducir_busqueda:
 - busqueda
-- dispositivo: opcional. Ejemplos: "iPhone", "PC", "Alexa", "bocina".
-
-Parámetros opcionales de abrir/reanudar:
-- dispositivo
-
-Reglas de Spotify:
-- Usa reproducir_busqueda para canciones, artistas, playlists, géneros, estados de ánimo o descripciones de música.
-- Conserva en busqueda lo que el usuario pidió, por ejemplo "Eminem", "Lose Yourself", "mi playlist de gym" o "música tranquila".
-- Usa abrir o reanudar cuando el usuario diga "reanuda", "continúa la música", "sigue reproduciendo" o equivalente.
-- Usa cancion_actual cuando pregunte qué canción, artista o música está sonando.
-- Si el usuario menciona dónde quiere escuchar la música, conserva ese destino en parametro dispositivo.
-- Ejemplo: "pon Eminem en mi iPhone" debe usar dispositivo "iPhone".
 
 maps:
 - abrir_ruta
@@ -205,57 +194,6 @@ Usuario: reproduce Eminem
   "accion": "reproducir_busqueda",
   "parametros": {
     "busqueda": "Eminem"
-  }
-}
-
-Usuario: pon mi playlist de gym
-{
-  "modulo": "spotify",
-  "accion": "reproducir_busqueda",
-  "parametros": {
-    "busqueda": "mi playlist de gym"
-  }
-}
-
-Usuario: pon música tranquila
-{
-  "modulo": "spotify",
-  "accion": "reproducir_busqueda",
-  "parametros": {
-    "busqueda": "música tranquila"
-  }
-}
-
-Usuario: qué canción está sonando
-{
-  "modulo": "spotify",
-  "accion": "cancion_actual",
-  "parametros": {}
-}
-
-Usuario: reanuda la música
-{
-  "modulo": "spotify",
-  "accion": "reanudar",
-  "parametros": {}
-}
-
-Usuario: pon Eminem en mi iPhone
-{
-  "modulo": "spotify",
-  "accion": "reproducir_busqueda",
-  "parametros": {
-    "busqueda": "Eminem",
-    "dispositivo": "iPhone"
-  }
-}
-
-Usuario: reanuda Spotify en mi iPhone
-{
-  "modulo": "spotify",
-  "accion": "reanudar",
-  "parametros": {
-    "dispositivo": "iPhone"
   }
 }
 

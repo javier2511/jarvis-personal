@@ -155,16 +155,8 @@ def ejecutar_memory(accion, parametros):
 
 
 def ejecutar_spotify(accion, parametros):
-    dispositivo = parametros.get("dispositivo")
-    if isinstance(dispositivo, str):
-        dispositivo = dispositivo.strip() or None
-    else:
-        dispositivo = None
-
     if accion in {"abrir", "reproducir", "reanudar"}:
-        return spotify_api.reproducir(
-            dispositivo=dispositivo
-        )
+        return spotify_api.reproducir()
 
     if accion == "reproducir_busqueda":
         busqueda = parametros.get("busqueda", "").strip()
@@ -172,10 +164,7 @@ def ejecutar_spotify(accion, parametros):
         if not busqueda:
             return "Necesito saber qué quieres reproducir."
 
-        return spotify_api.reproducir_busqueda(
-            busqueda,
-            dispositivo=dispositivo,
-        )
+        return spotify_api.reproducir_busqueda(busqueda)
 
     if accion == "pausa":
         return spotify_api.pausar()
