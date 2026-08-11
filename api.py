@@ -17,6 +17,7 @@ from jarvis import Jarvis
 from services.calendar_service import CalendarService
 from services.spotify_service import SpotifyService
 from services.tts_service import TTSService
+from services.whoop_service import WhoopService
 
 
 # -----------------------------------------------------------------------------
@@ -48,7 +49,7 @@ tts = TTSService()
 openai_client = OpenAI()
 spotify_service = SpotifyService()
 calendar_service = CalendarService()
-
+whoop_service = WhoopService()
 
 # -----------------------------------------------------------------------------
 # ACCIONES POSTERIORES PENDIENTES
@@ -439,7 +440,138 @@ def google_status() -> Dict[str, bool]:
         "conectado": calendar_service.esta_conectado(),
     }
 
+# -----------------------------------------------------------------------------
+# WHOOP
+# -----------------------------------------------------------------------------
 
+
+@app.get("/whoop/login")
+def whoop_login(request: Request):
+
+    authorization_url, state = (
+        whoop_service.obtener_url_autorizacion()
+    )
+
+    request.session["whoop_oauth_state"] = state
+
+    return RedirectResponse(
+        url=authorization_url
+    )
+
+
+@app.get("/whoop/callback")
+def whoop_callback(
+    request: Request,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+):
+
+    if error:
+
+        return HTMLResponse(
+            content=f"""
+            <html>
+                <body style="
+                    background:#020711;
+                    color:#dffcff;
+                    font-family:Arial;
+                    text-align:center;
+                    padding-top:80px;
+                ">
+                    <h1>No se pudo conectar WHOOP</h1>
+                    <p>{error}</p>
+
+                    <a
+                        href="/web/"
+                        style="color:#25dfff;"
+                    >
+                        Volver a Jarvis
+                    </a>
+                </body>
+            </html>
+            """,
+            status_code=400,
+        )
+
+    if not code:
+
+        raise HTTPException(
+            status_code=400,
+            detail="WHOOP no devolvió un código.",
+        )
+
+    expected_state = request.session.get(
+        "whoop_oauth_state"
+    )
+
+    if (
+        not expected_state
+        or not state
+        or state != expected_state
+    ):
+
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "El estado OAuth de WHOOP "
+                "no coincide."
+            ),
+        )
+
+    whoop_service.procesar_callback(
+        code=code
+    )
+
+    request.session.pop(
+        "whoop_oauth_state",
+        None,
+    )
+
+    return HTMLResponse(
+        content="""
+        <html>
+            <body style="
+                background:#020711;
+                color:#dffcff;
+                font-family:Arial;
+                text-align:center;
+                padding-top:80px;
+            ">
+
+                <h1>WHOOP conectado</h1>
+
+                <p>
+                    Jarvis ya tiene autorización
+                    para consultar tus datos de WHOOP.
+                </p>
+
+                <a
+                    href="/web/"
+                    style="
+                        color:#25dfff;
+                        font-size:18px;
+                    "
+                >
+                    Volver a Jarvis
+                </a>
+
+            </body>
+        </html>
+        """
+    )
+
+
+@app.get("/whoop/status")
+def whoop_status() -> Dict[str, Any]:
+
+    return {
+        "conectado":
+            whoop_service.esta_conectado(),
+
+        "token_path":
+            str(whoop_service.token_path),
+    }
 # -----------------------------------------------------------------------------
 # LEGALES
 # -----------------------------------------------------------------------------
