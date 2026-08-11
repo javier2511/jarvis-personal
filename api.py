@@ -572,7 +572,25 @@ def whoop_status() -> Dict[str, Any]:
         "token_path":
             str(whoop_service.token_path),
     }
-# -----------------------------------------------------------------------------
+@app.get("/whoop/today")
+def whoop_today() -> Dict[str, Any]:
+
+    try:
+
+        return {
+            "ok": True,
+            "datos":
+                whoop_service.resumen_hoy(),
+        }
+
+    except Exception as error:
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+# ---------------------------
+# --------------------------------------------------
 # LEGALES
 # -----------------------------------------------------------------------------
 

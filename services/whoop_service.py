@@ -16,6 +16,8 @@ class WhoopService:
     AUTH_URL = "https://api.prod.whoop.com/oauth/oauth2/auth"
     TOKEN_URL = "https://api.prod.whoop.com/oauth/oauth2/token"
 
+    API_BASE = "https://api.prod.whoop.com/developer/v2"
+
     SCOPES = [
         "offline",
         "read:recovery",
@@ -40,19 +42,13 @@ class WhoopService:
         )
 
         if not self.client_id:
-            raise RuntimeError(
-                "Falta WHOOP_CLIENT_ID."
-            )
+            raise RuntimeError("Falta WHOOP_CLIENT_ID.")
 
         if not self.client_secret:
-            raise RuntimeError(
-                "Falta WHOOP_CLIENT_SECRET."
-            )
+            raise RuntimeError("Falta WHOOP_CLIENT_SECRET.")
 
         if not self.redirect_uri:
-            raise RuntimeError(
-                "Falta WHOOP_REDIRECT_URI."
-            )
+            raise RuntimeError("Falta WHOOP_REDIRECT_URI.")
 
     # ------------------------------------------------------------------
     # TOKEN
@@ -98,18 +94,16 @@ class WhoopService:
                 return json.load(archivo)
 
         except Exception:
-
             return None
 
     # ------------------------------------------------------------------
-    # LOGIN
+    # OAUTH
     # ------------------------------------------------------------------
 
     def obtener_url_autorizacion(
         self,
     ) -> tuple[str, str]:
 
-        # WHOOP requiere state de al menos 8 caracteres.
         state = secrets.token_urlsafe(24)
 
         parametros = {
@@ -126,10 +120,6 @@ class WhoopService:
         )
 
         return url, state
-
-    # ------------------------------------------------------------------
-    # CALLBACK
-    # ------------------------------------------------------------------
 
     def procesar_callback(
         self,
@@ -155,8 +145,8 @@ class WhoopService:
         if not respuesta.ok:
 
             raise RuntimeError(
-                "WHOOP rechazó el intercambio "
-                f"del código: {respuesta.status_code} "
+                "WHOOP rechazó el intercambio del código: "
+                f"{respuesta.status_code} "
                 f"{respuesta.text}"
             )
 
@@ -166,10 +156,6 @@ class WhoopService:
 
         return token
 
-    # ------------------------------------------------------------------
-    # REFRESH
-    # ------------------------------------------------------------------
-
     def refrescar_token(
         self,
     ) -> Dict[str, Any]:
@@ -177,6 +163,7 @@ class WhoopService:
         token_actual = self._leer_token()
 
         if not token_actual:
+
             raise RuntimeError(
                 "WHOOP todavía no está conectado."
             )
@@ -186,9 +173,10 @@ class WhoopService:
         )
 
         if not refresh_token:
+
             raise RuntimeError(
-                "WHOOP no devolvió refresh_token. "
-                "Vuelve a autorizar incluyendo offline."
+                "WHOOP no tiene refresh_token. "
+                "Vuelve a realizar /whoop/login."
             )
 
         respuesta = requests.post(
@@ -224,6 +212,344 @@ class WhoopService:
         return nuevo_token
 
     # ------------------------------------------------------------------
+    # REQUESTS
+    # ------------------------------------------------------------------
+
+    def _request(
+        self,
+        endpoint: str,
+        params: Dict[str, Any] | None = None,
+        reintentar: bool = True,
+    ) -> Dict[str, Any]:
+
+        token = self._leer_token()
+
+        if not token:
+
+            raise RuntimeError(
+                "WHOOP no está conectado."
+            )
+
+        access_token = token.get(
+            "access_token"
+        )
+
+        if not access_token:
+
+            raise RuntimeError(
+                "No encontré access_token de WHOOP."
+            )
+
+        respuesta = requests.get(
+            f"{self.API_BASE}{endpoint}",
+            headers={
+                "Authorization":
+                    f"Bearer {access_token}",
+            },
+            params=params,
+            timeout=20,
+        )
+
+
+        
+        if (
+            respuesta.status_code == 401
+            and reintentar
+        ):
+
+            self.refrescar_token()
+
+            return self._request(
+                endpoint=endpoint,
+                params=params,
+                reintentar=False,
+            )
+
+        if not respuesta.ok:
+
+            raise RuntimeError(
+                "Error consultando WHOOP "
+                f"{endpoint}: "
+                f"{respuesta.status_code} "
+                f"{respuesta.text}"
+            )
+
+        return respuesta.json()
+
+    # ------------------------------------------------------------------
+    # PERFIL
+    # ------------------------------------------------------------------
+
+    def perfil(
+        self,
+    ) -> Dict[str, Any]:
+
+        return self._request(
+            "/user/profile/basic"
+        )
+
+    # ------------------------------------------------------------------
+    # RECOVERY
+    # ------------------------------------------------------------------
+
+    def recovery_actual(
+        self,
+    ) -> Dict[str, Any] | None:
+
+        datos = self._request(
+            "/recovery",
+            params={
+                "limit": 1,
+            },
+        )
+
+        records = datos.get(
+            "records",
+            [],
+        )
+
+        if not records:
+            return None
+
+        return records[0]
+
+    # ------------------------------------------------------------------
+    # CYCLE / STRAIN
+    # ------------------------------------------------------------------
+
+    def cycle_actual(
+        self,
+    ) -> Dict[str, Any] | None:
+
+        datos = self._request(
+            "/cycle",
+            params={
+                "limit": 1,
+            },
+        )
+
+        records = datos.get(
+            "records",
+            [],
+        )
+
+        if not records:
+            return None
+
+        return records[0]
+
+    # ------------------------------------------------------------------
+    # SLEEP
+    # ------------------------------------------------------------------
+
+    def sleep_actual(
+        self,
+    ) -> Dict[str, Any] | None:
+
+        datos = self._request(
+            "/activity/sleep",
+            params={
+                "limit": 5,
+            },
+        )
+
+        records = datos.get(
+            "records",
+            [],
+        )
+
+        if not records:
+            return None
+
+        /*
+            Evitamos devolver una siesta como
+            sueño principal.
+        */
+
+        for sleep in records:
+
+            if not sleep.get(
+                "nap",
+                False,
+            ):
+
+                return sleep
+
+        return records[0]
+
+    # ------------------------------------------------------------------
+    # RESUMEN
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _horas_desde_milisegundos(
+        milisegundos,
+    ) -> float | None:
+
+        if milisegundos is None:
+            return None
+
+        return round(
+            milisegundos
+            / 1000
+            / 60
+            / 60,
+            2,
+        )
+
+    def resumen_hoy(
+        self,
+    ) -> Dict[str, Any]:
+
+        recovery = self.recovery_actual()
+        cycle = self.cycle_actual()
+        sleep = self.sleep_actual()
+
+        resultado = {
+            "recovery": None,
+            "hrv": None,
+            "resting_heart_rate": None,
+            "spo2": None,
+            "skin_temp_celsius": None,
+            "strain": None,
+            "sleep_hours": None,
+            "sleep_performance": None,
+            "sleep_efficiency": None,
+            "sleep_consistency": None,
+            "respiratory_rate": None,
+        }
+
+        # Recovery
+
+        if (
+            recovery
+            and recovery.get(
+                "score_state"
+            ) == "SCORED"
+        ):
+
+            score = recovery.get(
+                "score",
+                {},
+            )
+
+            resultado["recovery"] = (
+                score.get(
+                    "recovery_score"
+                )
+            )
+
+            resultado["hrv"] = (
+                score.get(
+                    "hrv_rmssd_milli"
+                )
+            )
+
+            resultado[
+                "resting_heart_rate"
+            ] = score.get(
+                "resting_heart_rate"
+            )
+
+            resultado["spo2"] = (
+                score.get(
+                    "spo2_percentage"
+                )
+            )
+
+            resultado[
+                "skin_temp_celsius"
+            ] = score.get(
+                "skin_temp_celsius"
+            )
+
+        # Cycle / Strain
+
+        if (
+            cycle
+            and cycle.get(
+                "score_state"
+            ) == "SCORED"
+        ):
+
+            score = cycle.get(
+                "score",
+                {},
+            )
+
+            resultado["strain"] = (
+                score.get(
+                    "strain"
+                )
+            )
+
+        # Sleep
+
+        if (
+            sleep
+            and sleep.get(
+                "score_state"
+            ) == "SCORED"
+        ):
+
+            score = sleep.get(
+                "score",
+                {},
+            )
+
+            stages = score.get(
+                "stage_summary",
+                {},
+            )
+
+            total_sleep_milli = (
+                stages.get(
+                    "total_light_sleep_time_milli",
+                    0,
+                )
+                + stages.get(
+                    "total_slow_wave_sleep_time_milli",
+                    0,
+                )
+                + stages.get(
+                    "total_rem_sleep_time_milli",
+                    0,
+                )
+            )
+
+            resultado["sleep_hours"] = (
+                self._horas_desde_milisegundos(
+                    total_sleep_milli
+                )
+            )
+
+            resultado[
+                "sleep_performance"
+            ] = score.get(
+                "sleep_performance_percentage"
+            )
+
+            resultado[
+                "sleep_efficiency"
+            ] = score.get(
+                "sleep_efficiency_percentage"
+            )
+
+            resultado[
+                "sleep_consistency"
+            ] = score.get(
+                "sleep_consistency_percentage"
+            )
+
+            resultado[
+                "respiratory_rate"
+            ] = score.get(
+                "respiratory_rate"
+            )
+
+        return resultado
+
+    # ------------------------------------------------------------------
     # ESTADO
     # ------------------------------------------------------------------
 
@@ -237,5 +563,7 @@ class WhoopService:
             return False
 
         return bool(
-            token.get("access_token")
+            token.get(
+                "access_token"
+            )
         )
