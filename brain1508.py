@@ -98,24 +98,6 @@ maps:
   Parámetros:
   - lugar
 
-- guardar_lugar
-  Parámetros:
-  - alias
-  - destino
-
-- listar_lugares
-
-- eliminar_lugar
-  Parámetros:
-  - alias
-
-Reglas de lugares:
-- Usa guardar_lugar cuando Javier diga "guarda este lugar como...", "recuerda esta dirección como..." o equivalente.
-- Usa listar_lugares cuando pregunte qué lugares tiene guardados.
-- Usa eliminar_lugar cuando pida borrar un lugar guardado.
-- Para abrir_ruta y abrir_lugar conserva alias como "casa", "trabajo", "gym" o "casa de Ana"; MapsService resolverá el alias.
-- Si falta la dirección o destino al guardar un lugar, usa modulo none.
-
 
 whoop:
 - resumen_hoy
@@ -312,27 +294,6 @@ Usuario: llévame al trabajo
   "parametros":{
       "destino":"trabajo"
   }
-}
-
-Usuario: guarda Insurgentes Sur 1602 como trabajo
-{
-  "modulo":"maps",
-  "accion":"guardar_lugar",
-  "parametros":{"alias":"trabajo","destino":"Insurgentes Sur 1602"}
-}
-
-Usuario: qué lugares tengo guardados
-{
-  "modulo":"maps",
-  "accion":"listar_lugares",
-  "parametros":{}
-}
-
-Usuario: elimina mi gym de lugares guardados
-{
-  "modulo":"maps",
-  "accion":"eliminar_lugar",
-  "parametros":{"alias":"gym"}
 }
 
 Usuario: llévame a Santa Fe

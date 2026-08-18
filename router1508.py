@@ -8,7 +8,6 @@ from services.spotify_service import SpotifyService
 from services.sports_service import SportsService
 from datetime import datetime, timedelta
 from services.maps_service import MapsService
-from services.places_service import PlacesService
 from services.whoop_service import WhoopService
 from services.gmail_service import GmailService
 
@@ -19,7 +18,6 @@ routine = RoutineService()
 spotify_api = SpotifyService()
 sports = SportsService()
 maps = MapsService()
-places = PlacesService()
 whoop = WhoopService()
 gmail = GmailService()
 
@@ -226,34 +224,22 @@ def ejecutar_sports(accion, parametros):
 def ejecutar_maps(accion, parametros):
 
     if accion == "abrir_ruta":
+
         destino = parametros.get("destino", "").strip()
+
         if not destino:
             return "Necesito un destino."
+
         return maps.abrir_ruta(destino)
 
     if accion == "abrir_lugar":
+
         lugar = parametros.get("lugar", "").strip()
+
         if not lugar:
             return "Necesito un lugar."
+
         return maps.abrir_lugar(lugar)
-
-    if accion == "guardar_lugar":
-        alias = parametros.get("alias", "").strip()
-        destino = parametros.get("destino", "").strip()
-        if not alias:
-            return "Necesito saber cómo quieres llamar a ese lugar."
-        if not destino:
-            return "Necesito la dirección o ubicación del lugar."
-        return places.guardar(alias, destino)
-
-    if accion == "listar_lugares":
-        return places.resumen()
-
-    if accion == "eliminar_lugar":
-        alias = parametros.get("alias", "").strip()
-        if not alias:
-            return "Necesito saber qué lugar quieres eliminar."
-        return places.eliminar(alias)
 
     return "Acción de Maps no reconocida."
 
