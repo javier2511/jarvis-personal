@@ -18,7 +18,6 @@ from services.calendar_service import CalendarService
 from services.spotify_service import SpotifyService
 from services.tts_service import TTSService
 from services.whoop_service import WhoopService
-from services.routine_service import RoutineService
 
 
 # -----------------------------------------------------------------------------
@@ -51,7 +50,6 @@ openai_client = OpenAI()
 spotify_service = SpotifyService()
 calendar_service = CalendarService()
 whoop_service = WhoopService()
-routine_service = RoutineService()
 
 # -----------------------------------------------------------------------------
 # ACCIONES POSTERIORES PENDIENTES
@@ -267,32 +265,6 @@ def ejecutar_accion_despues(datos: AccionPosterior) -> Dict[str, Any]:
             "error": str(error),
         }
 
-
-
-# -----------------------------------------------------------------------------
-# CAR MODE
-# -----------------------------------------------------------------------------
-
-
-@app.get("/car/start")
-def car_mode_start() -> Dict[str, Any]:
-    """
-    Endpoint pensado para una Automatización de Atajos al conectar CarPlay.
-
-    Devuelve texto para que el iPhone lo diga y las acciones que Jarvis
-    debe ejecutar después (Spotify en iPhone).
-    """
-    resultado_crudo = routine_service.modo_conduccion()
-    return _preparar_respuesta(
-        "Activar modo conducción",
-        resultado_crudo,
-    )
-
-
-@app.post("/car/start")
-def car_mode_start_post() -> Dict[str, Any]:
-    # POST permite usar el mismo endpoint cómodamente desde Atajos.
-    return car_mode_start()
 
 # -----------------------------------------------------------------------------
 # SPOTIFY

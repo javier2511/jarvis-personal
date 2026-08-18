@@ -34,7 +34,6 @@ from services.traffic_service import TrafficService
 from services.weather_service import WeatherService
 from services.whoop_service import WhoopService
 from services.memory_service import MemoryService
-from services.car_mode_service import CarModeService
 
 
 logger = logging.getLogger(__name__)
@@ -56,7 +55,6 @@ class RoutineService:
         self.briefing = BriefingService()
         self.memory = MemoryService()
         self.whoop = WhoopService()
-        self.car_mode = CarModeService()
 
         self.city = os.getenv(
             "JARVIS_CITY",
@@ -270,18 +268,6 @@ class RoutineService:
 
         logger.info("Rutina de Buenos días finalizada.")
         return resultado
-
-    def modo_conduccion(self) -> Dict[str, Any]:
-        """
-        Activa Car Mode V1.
-
-        Da un resumen corto de WHOOP, prepara Spotify en el iPhone
-        y pregunta el destino. La respuesta del usuario puede seguir
-        entrando por /comando para que Maps y Places resuelvan el lugar.
-        """
-
-        logger.info("Iniciando modo conducción.")
-        return self.car_mode.iniciar()
 
     # ------------------------------------------------------------------
     # UTILIDADES
